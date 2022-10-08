@@ -4,6 +4,9 @@ module.exports = {
   content: ["./docs/*.{html,js}"],
   theme: {
     extend: {
+      screens: {
+        'nonmini': '540px'
+      },
       colors: {
         background: '#cabea3',
         eventbg: 'white',
