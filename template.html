@@ -1,29 +1,23 @@
 {{ define "event"}}
-<div class="p-4 m-4 flex bg-black/[.5] rounded {{ if .Hidden }} hidden {{ end }}">
-  <div class="flex-none">
-    <img src="{{ .Image }}" class="w-14 h-14 mr-4 rounded">
-    <div class="mt-4">CHF 15</div>
+<div class="m-4 flex flex-col bg-black/[.5] rounded {{ if .Hidden }} hidden {{ end }}">
+  <div class="flex-none flex">
+    <!-- title row-->
+    <img src="{{ .Image }}" class="w-16 h-16 m-4 rounded">
+    <div class="flex-grow my-4">
+      <h2 class="text-3xl">{{ .Title }}</h2>
+      <div>{{ .Location }}</div>
+    </div>
+    <div class="text-right m-4">
+      <div class="text-3xl">{{.NiceDate}}</div>
+      <div>{{.Hour}}</div>
+    </div>
   </div>
-  <div class="flex-grow">
-    <div class="h-14 flex w-full">
-      <div>
-        <h2 class="text-3xl">{{ .Title }}</h2>
-        <div>{{ .Location }}</div>
-      </div>
-      <div class="flex-grow"></div>
-      <div class="text-xl text-right">
-        <div>{{.NiceDate}}</div>
-        <div>{{.Hour}}</div>
-      </div>
-    </div>
-
+  <div class="flex">
+    <!-- content row -->
+    <div class="m-4 w-16 flex-none">{{.Price}}</div>
     <div class="mt-4">
-      <ul>
-
-        <li><a href="{{ .URL }}" class="text-blue-300">{{ .URL }}</a></li>
-      </ul>
+      <a href="{{ .URL }}" class="text-blue-300">{{ .URL }}</a>
     </div>
-
   </div>
 </div>
 

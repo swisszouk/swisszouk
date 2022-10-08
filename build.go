@@ -33,6 +33,7 @@ type Event struct {
 	Hour       string    `yaml:"time"`
 	Image      string    `yaml:"image"`
 	Hidden     bool      `yaml:"hidden"`
+	Price      string    `yaml:"price"`
 
 	DescriptionHTML template.HTML
 	SourceFileName  string
