@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"path"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -169,7 +170,7 @@ func (r *renderer) renderAll() {
 	}
 	sink.Close()
 	r.warnf("Regenerated %s, %d events.", dest, len(events))
-	cmd := exec.Command(*tailwindBin, "-i", "app.css", "-o", "_build/compiled_style.css")
+	cmd := exec.Command(*tailwindBin, "-i", "app.css", "-o", path.Join(r.outDir, "compiled_style.css"))
 	if err := cmd.Run(); err != nil {
 		r.warnf("Tailwind failed: %v", err)
 		return
@@ -205,7 +206,7 @@ func main() {
 	r := renderer{
 		sourceGlob:     "events/*.md",
 		assetSourceDir: "img",
-		outDir:         "_build",
+		outDir:         "docs",
 		htmlRenderer: blackfriday.NewHTMLRenderer(blackfriday.HTMLRendererParameters{
 			Flags: blackfriday.CommonHTMLFlags,
 		}),
@@ -213,7 +214,7 @@ func main() {
 	r.renderAll()
 	go watch(r.renderAll)
 
-	s := http.FileServer(http.Dir("_build"))
+	s := http.FileServer(http.Dir(r.outDir))
 	fmt.Println("preview server at :9000")
 	http.ListenAndServe(":9000", s)
 
