@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"sort"
 	"strings"
 	"time"
 
@@ -21,14 +22,25 @@ import (
 var tailwindBin = flag.String("tailwind", "tailwind/tailwindcss-windows-x64.exe", "tailwind binary")
 
 type Event struct {
-	Title    string   `yaml:"title"`
-	Slots    []string `yaml:"slots"`
-	Location string
-	URL      string
-	City     string
+	Title      string   `yaml:"title"`
+	Slots      []string `yaml:"slots"`
+	Location   string
+	URL        string `yaml:"URL"`
+	City       string
+	DateString string    `yaml:"date"`
+	Date       time.Time `yaml:"date_date"`
+	Hour       string    `yaml:"time"`
+	Image      string    `yaml:"image"`
+	Hidden     bool      `yaml:"hidden"`
 
 	DescriptionHTML template.HTML
 	SourceFileName  string
+
+	SeparatorBelow string
+}
+
+func (e Event) TimeAndDate() string {
+	return e.Hour + ", " + e.Date.Format("Jan 2")
 }
 
 var cityMap = map[string]string{
@@ -46,12 +58,17 @@ type renderer struct {
 
 func (r *renderer) renderEvent(sourceContent string) (*Event, error) {
 
-	parts := strings.Split(sourceContent, "---")
-	if len(parts) != 2 {
-		return nil, fmt.Errorf("no front matter marker found")
+	var yamlText, mdText string
+	switch parts := strings.Split(sourceContent, "---"); len(parts) {
+	case 1:
+		yamlText = sourceContent
+	case 2:
+		yamlText = parts[0]
+		mdText = strings.TrimSpace(parts[1])
 	}
+
 	ev := &Event{}
-	if err := yaml.Unmarshal([]byte(parts[0]), &ev); err != nil {
+	if err := yaml.Unmarshal([]byte(yamlText), &ev); err != nil {
 		return nil, fmt.Errorf("bad front matter: %v", err)
 	}
 	city, ok := cityMap[ev.City]
@@ -59,13 +76,28 @@ func (r *renderer) renderEvent(sourceContent string) (*Event, error) {
 		return nil, fmt.Errorf("unknown city %q, try one of: %v", ev.City, cityMap) // TODO maps.keys
 	}
 	ev.City = city
+	if ev.DateString != "" {
+		loc, _ := time.LoadLocation("Europe/Berlin")
+		t, err := time.ParseInLocation("2006-01-02", ev.DateString, loc)
+		if err != nil {
+			return nil, fmt.Errorf("bad date %q: %w", ev.DateString, err)
+		}
+		ev.Date = t
+	}
+	if !strings.HasPrefix(ev.URL, "http") {
+		ev.URL = "https://" + ev.URL
+	}
+
+	if mdText == "" {
+		return ev, nil
+	}
 
 	parser := blackfriday.New(
 		blackfriday.WithRenderer(r.htmlRenderer),
 		blackfriday.WithExtensions(blackfriday.CommonExtensions),
 	)
-	mdSource := strings.TrimSpace(string(parts[1]))
-	mdSource = strings.ReplaceAll(mdSource, "\r\n", "\n")
+
+	mdSource := strings.ReplaceAll(mdText, "\r\n", "\n")
 	ast := parser.Parse([]byte(mdSource))
 	h := ast.FirstChild
 	if h.Type != blackfriday.Heading || h.HeadingData.Level != 1 {
@@ -109,6 +141,15 @@ func (r *renderer) renderAll() {
 			r.warnf("Loaded %s (%s).", fpath, ev.Title)
 			events = append(events, ev)
 		}
+	}
+	sort.Slice(events, func(i, j int) bool { return events[i].Date.Before(events[j].Date) })
+	for i := 0; i+1 < len(events); i++ {
+		_, prevM, _ := events[i].Date.Date()
+		_, nextM, _ := events[i+1].Date.Date()
+		if prevM != nextM {
+			events[i].SeparatorBelow = nextM.String()
+		}
+
 	}
 
 	dest := filepath.Join(r.outDir, "index.html")
