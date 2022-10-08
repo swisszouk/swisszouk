@@ -1,5 +1,5 @@
 title: Zouk Mates
-location: TBD
+location: Silbando
 date: 2022-11-04
 time: 21:00
 price: 20 CHF

@@ -1,4 +1,4 @@
-title: Candelelight
+title: Candlelight
 location: Wandellust
 date: 2022-10-24
 time: 21:00

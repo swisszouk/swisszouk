@@ -2,15 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer components {
-.event-details-markdown li {
-    @apply mx-4;
-}
-.event-details-markdown p {
-    @apply my-1;
-}
-.event-details-markdown h1 {
-    @apply text-2xl;
+
+body {
+    font-family: 'Nunito', sans-serif;
 }
 
-} /* components */
+@layer components {
+    .event-details-markdown li {
+        @apply mx-4;
+    }
+
+    .event-details-markdown p {
+        @apply my-1;
+    }
+
+    .event-details-markdown h1 {
+        @apply text-2xl;
+    }
+
+}
+
+/* components */

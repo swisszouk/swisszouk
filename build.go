@@ -42,6 +42,9 @@ type Event struct {
 func (e Event) TimeAndDate() string {
 	return e.Hour + ", " + e.Date.Format("Jan 2")
 }
+func (e Event) NiceDate() string {
+	return e.Date.Format("Jan 2")
+}
 
 var cityMap = map[string]string{
 	"zrh":   "Zürich",

@@ -1,5 +1,5 @@
 title: Zouk Mates
-location: TBD
+location: Iron Mams
 date: 2022-11-05
 time: 21:00
 price: 20 CHF

@@ -1,19 +1,26 @@
 {{ define "event"}}
-<div class="p-4 m-4 flex bg-eventbg/[.5] rounded {{ if .Hidden }} hidden {{ end }}">
+<div class="p-4 m-4 flex bg-black/[.5] rounded {{ if .Hidden }} hidden {{ end }}">
   <div class="flex-none">
     <img src="{{ .Image }}" class="w-14 h-14 mr-4 rounded">
     <div class="mt-4">CHF 15</div>
   </div>
-  <div>
-    <div class="h-14">
-      <h2 class="text-3xl">{{ .Title }}</h2>
-      <div>{{ .TimeAndDate }}</div>
+  <div class="flex-grow">
+    <div class="h-14 flex w-full">
+      <div>
+        <h2 class="text-3xl">{{ .Title }}</h2>
+        <div>{{ .Location }}</div>
+      </div>
+      <div class="flex-grow"></div>
+      <div class="text-xl text-right">
+        <div>{{.NiceDate}}</div>
+        <div>{{.Hour}}</div>
+      </div>
     </div>
 
     <div class="mt-4">
       <ul>
-        <li>{{ .Location }}</li>
-        <li><a href="{{ .URL }}" class="text-blue-800">{{ .URL }}</a></li>
+
+        <li><a href="{{ .URL }}" class="text-blue-300">{{ .URL }}</a></li>
       </ul>
     </div>
 
@@ -42,19 +49,22 @@
 
 <head>
   <meta charset="UTF-8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito&display=swap" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="compiled_style.css" rel="stylesheet">
 </head>
 
 <body class="h-full">
-  <div class="bg-gradient-to-r from-gradient_left via-gradient_mid to-gradient_right text-main h-full">
+  <div class="bg-gradient-to-r from-gradient_left via-gradient_mid to-gradient_right text-white/[0.9] h-full">
     <div
       style="background: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.01) 40%,rgba(0, 0, 0, 0.01) 60%, rgba(0,0,0,1) 100%); position:fixed;"
       class="w-full h-full overflow-auto">
 
       <div class="pt-4">
         <h1 class="text-3xl font-bold text-center text-title">
-          Zouk Calendar
+          Swiss Zouk Calendar
         </h1>
       </div>
       <div class="max-w-lg m-auto">
