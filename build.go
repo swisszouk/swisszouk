@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"flag"
 	"fmt"
 	"html/template"
@@ -71,13 +70,12 @@ type renderer struct {
 
 func (r *renderer) renderEvent(sourceContent string) (*Event, error) {
 
-	var yamlText, mdText string
+	var yamlText string
 	switch parts := strings.Split(sourceContent, "---"); len(parts) {
 	case 1:
 		yamlText = sourceContent
 	case 2:
 		yamlText = parts[0]
-		mdText = strings.TrimSpace(parts[1])
 	}
 
 	ev := &Event{}
@@ -104,29 +102,6 @@ func (r *renderer) renderEvent(sourceContent string) (*Event, error) {
 		ev.Price = strings.TrimSpace(ev.Price) + " CHF"
 	}
 
-	if mdText == "" {
-		return ev, nil
-	}
-
-	parser := blackfriday.New(
-		blackfriday.WithRenderer(r.htmlRenderer),
-		blackfriday.WithExtensions(blackfriday.CommonExtensions),
-	)
-
-	mdSource := strings.ReplaceAll(mdText, "\r\n", "\n")
-	ast := parser.Parse([]byte(mdSource))
-	h := ast.FirstChild
-	if h.Type != blackfriday.Heading || h.HeadingData.Level != 1 {
-		return nil, fmt.Errorf("Expected a top-level heading at the beginning (a line starting with #)")
-	}
-	ev.Title = strings.TrimSpace(string(h.FirstChild.Literal))
-	var buf bytes.Buffer
-	r.htmlRenderer.RenderHeader(&buf, ast)
-	ast.Walk(func(node *blackfriday.Node, entering bool) blackfriday.WalkStatus {
-		return r.htmlRenderer.RenderNode(&buf, node, entering)
-	})
-	r.htmlRenderer.RenderFooter(&buf, ast)
-	ev.DescriptionHTML = template.HTML(buf.String())
 	return ev, nil
 }
 
