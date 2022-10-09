@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"os/exec"
 	"path"
@@ -46,6 +47,13 @@ func (e Event) TimeAndDate() string {
 }
 func (e Event) NiceDate() string {
 	return e.Date.Format("Jan 2")
+}
+func (e Event) Domain() string {
+	u, err := url.Parse(e.URL)
+	if err != nil {
+		return e.URL
+	}
+	return u.Hostname()
 }
 
 var cityMap = map[string]string{
@@ -91,6 +99,9 @@ func (r *renderer) renderEvent(sourceContent string) (*Event, error) {
 	}
 	if !strings.HasPrefix(ev.URL, "http") {
 		ev.URL = "https://" + ev.URL
+	}
+	if ev.Price != "" && !strings.HasSuffix(ev.Price, "CHF") {
+		ev.Price = strings.TrimSpace(ev.Price) + " CHF"
 	}
 
 	if mdText == "" {
