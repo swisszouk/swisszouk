@@ -176,12 +176,24 @@ func (r *renderer) renderAll() {
 	}
 
 	var mainT = template.Must(template.ParseFiles("template.html"))
-	if err := mainT.Execute(sink, events); err != nil {
+	if err := mainT.ExecuteTemplate(sink, "indexpage", events); err != nil {
 		r.warnf("Write %s: %v", dest, err)
 		return
 	}
 	sink.Close()
 	r.warnf("Regenerated %s, %d events.", dest, len(events))
+
+	aboutSink, err := os.Create(filepath.Join(r.outDir, "about.html"))
+	if err != nil {
+		r.warnf("Open %s for writing: %v", "about.html", err)
+		return
+	}
+	if err := mainT.ExecuteTemplate(aboutSink, "aboutpage", nil); err != nil {
+		r.warnf("write about.html: %v", err)
+		return
+	}
+	aboutSink.Close()
+
 	cmd := exec.Command(*tailwindBin, "-i", "app.css", "-o", path.Join(r.outDir, "compiled_style.css"))
 	if err := cmd.Run(); err != nil {
 		r.warnf("Tailwind failed: %v", err)
