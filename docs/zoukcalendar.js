@@ -7,6 +7,7 @@ var zoukcalendar = (() => {
                 el.style.display = 'none'
             }
         })
+        document.getElementById('content-container').style.visibility = 'visible'
     }
 
     if (document.readyState == 'loading') {

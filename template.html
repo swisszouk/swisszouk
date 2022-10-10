@@ -83,6 +83,9 @@
 
 {{ define "indexpage" }}
 {{ template "htmlheader" }}
+<script>
+  document.getElementById('content-container').style.visibility = 'hidden';
+</script>
 {{ range . }}
 {{ template "event" . }}
 {{ end }}
