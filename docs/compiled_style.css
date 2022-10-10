@@ -551,6 +551,16 @@ video {
   --tw-backdrop-sepia:  ;
 }
 
+/* Only show separators if there is something above them: */
+
+.separator {
+  display: none;
+}
+
+.event+.separator {
+  display: flex;
+}
+
 .absolute {
   position: absolute;
 }

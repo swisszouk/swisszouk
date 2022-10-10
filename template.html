@@ -1,6 +1,6 @@
 {{ define "event"}}
 <div data-date="{{ .DateString }}"
-  class="mx-2 my-4 flex flex-col bg-black/[.5] rounded {{ if .Hidden }} hidden {{ end }}">
+  class="event mx-2 my-4 flex flex-col bg-black/[.5] rounded {{ if .Hidden }} hidden {{ end }}">
   <div class="flex-none flex">
     <!-- title row-->
     <img src="{{ .Image }}" class="w-14 h-14 nonmini:w-16 nonmini:h-16 m-2 rounded">
@@ -23,7 +23,7 @@
 </div>
 
 {{ if .SeparatorBelow }}
-<div class="flex items-center">
+<div class="separator items-center">
   <div class="border-b-2 border-border flex-grow h-2 mx-4">
 
   </div>
@@ -52,6 +52,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="compiled_style.css" rel="stylesheet">
+
+  <script defer src="zoukcalendar.js"></script>
 </head>
 
 <body class="h-full">

@@ -20,6 +20,15 @@ body {
         @apply text-2xl;
     }
 
+    /* Only show separators if there is something above them: */
+    .separator {
+        display: none;
+    }
+
+    .event+.separator {
+        display: flex;
+    }
+
 
 }
 
