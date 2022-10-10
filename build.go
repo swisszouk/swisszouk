@@ -52,7 +52,7 @@ func (e Event) Domain() string {
 	if err != nil {
 		return e.URL
 	}
-	return u.Hostname()
+	return strings.TrimPrefix(u.Hostname(), "www.") + u.Path
 }
 
 var cityMap = map[string]string{

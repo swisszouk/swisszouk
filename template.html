@@ -16,8 +16,8 @@
   <div class="flex">
     <!-- content row -->
     <div class="mx-2 mb-2 w-14 nonmini:w-16 flex-none">{{.Price}}</div>
-    <div class="mr-2 mb-2">
-      <a href="{{ .URL }}" class="text-blue-300">{{ .Domain }}</a>
+    <div class="mr-2 mb-2 text-ellipsis overflow-hidden">
+      <a href="{{ .URL }}" class="text-blue-300" style="white-space: nowrap">{{ .Domain }}</a>
     </div>
   </div>
 </div>
