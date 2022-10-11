@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"html/template"
@@ -11,6 +12,7 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"strings"
 	"time"
@@ -57,10 +59,18 @@ type renderer struct {
 	outDir     string
 }
 
+var timeRe = regexp.MustCompile(`^\d?\d:\d\d$`)
+
 func (r *renderer) renderEvent(yamlText string) (*Event, error) {
 	ev := &Event{}
 	if err := yaml.Unmarshal([]byte(yamlText), &ev); err != nil {
 		return nil, fmt.Errorf("bad front matter: %v", err)
+	}
+	if ev.Title = strings.TrimSpace(ev.Title); ev.Title == "" {
+		return nil, errors.New("no title")
+	}
+	if ev.Location = strings.TrimSpace(ev.Location); ev.Location == "" {
+		return nil, errors.New("no location")
 	}
 	city, ok := cityMap[ev.City]
 	if ev.City != "" && !ok {
@@ -75,11 +85,17 @@ func (r *renderer) renderEvent(yamlText string) (*Event, error) {
 		}
 		ev.Date = t
 	}
-	if !strings.HasPrefix(ev.URL, "http") {
-		ev.URL = "https://" + ev.URL
+	if ev.Hour = strings.TrimSpace(ev.Hour); !timeRe.MatchString(ev.Hour) {
+		return nil, fmt.Errorf("bad time %q; should be HH:MM", ev.Hour)
 	}
 	if ev.Price != "" && !strings.HasSuffix(ev.Price, "CHF") {
 		ev.Price = strings.TrimSpace(ev.Price) + " CHF"
+	}
+	if !strings.HasPrefix(ev.URL, "http") {
+		ev.URL = "https://" + ev.URL
+	}
+	if _, err := os.ReadFile(path.Join(r.outDir, ev.Image)); err != nil {
+		return nil, fmt.Errorf("cannot read image %s: %w", ev.Image, err)
 	}
 
 	return ev, nil
@@ -109,7 +125,6 @@ func (r *renderer) renderAll() {
 		if err != nil {
 			r.warnf("Skipping %s: %v", fpath, err)
 		} else {
-			r.warnf("Loaded %s (%s).", fpath, ev.Title)
 			events = append(events, ev)
 		}
 	}
