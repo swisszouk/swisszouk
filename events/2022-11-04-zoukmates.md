@@ -1,4 +1,4 @@
-title: Zouk Mates
+title: "Zoukmates: Raú & Isa"
 location: Silbando
 date: 2022-11-04
 time: 21:00

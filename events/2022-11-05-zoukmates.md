@@ -1,4 +1,4 @@
-title: Zouk Mates
+title: "Zoukmates: Raú & Isa"
 location: Iron Mams
 date: 2022-11-05
 time: 21:00
