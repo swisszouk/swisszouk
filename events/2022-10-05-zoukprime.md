@@ -3,5 +3,5 @@ location: Silbando
 date: 2022-10-15
 time: 21:30
 price: 15 CHF
-URL: https://www.zoukessence.ch/events/
+URL: https://www.zoukessence.ch/shop/zoukprime/
 image: zoukprime.jpg
