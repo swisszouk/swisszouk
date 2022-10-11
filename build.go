@@ -16,15 +16,13 @@ import (
 	"time"
 
 	"github.com/fsnotify/fsnotify"
-	blackfriday "github.com/russross/blackfriday/v2"
 	yaml "gopkg.in/yaml.v2"
 )
 
 var tailwindBin = flag.String("tailwind", "tailwind/tailwindcss-windows-x64.exe", "tailwind binary")
 
 type Event struct {
-	Title      string   `yaml:"title"`
-	Slots      []string `yaml:"slots"`
+	Title      string `yaml:"title"`
 	Location   string
 	URL        string `yaml:"URL"`
 	City       string
@@ -35,18 +33,11 @@ type Event struct {
 	Hidden     bool      `yaml:"hidden"`
 	Price      string    `yaml:"price"`
 
-	DescriptionHTML template.HTML
-	SourceFileName  string
+	SourceFileName string
 
 	SeparatorBelow string
 }
 
-func (e Event) TimeAndDate() string {
-	return e.Hour + ", " + e.Date.Format("Jan 2")
-}
-func (e Event) NiceDate() string {
-	return e.Date.Format("Jan 2")
-}
 func (e Event) Domain() string {
 	u, err := url.Parse(e.URL)
 	if err != nil {
@@ -62,10 +53,8 @@ var cityMap = map[string]string{
 }
 
 type renderer struct {
-	sourceGlob     string
-	assetSourceDir string
-	outDir         string
-	htmlRenderer   blackfriday.Renderer
+	sourceGlob string
+	outDir     string
 }
 
 func (r *renderer) renderEvent(sourceContent string) (*Event, error) {
@@ -182,9 +171,10 @@ func watch(f func()) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	w.Add(".")
+	w.Add("template.html")
+	w.Add("tailwind.config.js")
+	w.Add("app.css")
 	w.Add("events")
-	w.Add("img")
 
 	for {
 		select {
@@ -203,12 +193,8 @@ func watch(f func()) {
 func main() {
 
 	r := renderer{
-		sourceGlob:     "events/*.md",
-		assetSourceDir: "img",
-		outDir:         "docs",
-		htmlRenderer: blackfriday.NewHTMLRenderer(blackfriday.HTMLRendererParameters{
-			Flags: blackfriday.CommonHTMLFlags,
-		}),
+		sourceGlob: "events/*.md",
+		outDir:     "docs",
 	}
 	r.renderAll()
 	go watch(r.renderAll)
