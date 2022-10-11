@@ -57,16 +57,7 @@ type renderer struct {
 	outDir     string
 }
 
-func (r *renderer) renderEvent(sourceContent string) (*Event, error) {
-
-	var yamlText string
-	switch parts := strings.Split(sourceContent, "---"); len(parts) {
-	case 1:
-		yamlText = sourceContent
-	case 2:
-		yamlText = parts[0]
-	}
-
+func (r *renderer) renderEvent(yamlText string) (*Event, error) {
 	ev := &Event{}
 	if err := yaml.Unmarshal([]byte(yamlText), &ev); err != nil {
 		return nil, fmt.Errorf("bad front matter: %v", err)
@@ -193,7 +184,7 @@ func watch(f func()) {
 func main() {
 
 	r := renderer{
-		sourceGlob: "events/*.md",
+		sourceGlob: "events/*.yaml",
 		outDir:     "docs",
 	}
 	r.renderAll()
