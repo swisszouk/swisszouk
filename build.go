@@ -80,9 +80,9 @@ func (r *renderer) renderEvent(yamlText string) ([]Event, error) {
 	}
 	ev.City = city
 	if ev.DateString != "" {
-	ev.DateStringList = append(ev.DateStringList, ev.DateString)
+		ev.DateStringList = append(ev.DateStringList, ev.DateString)
 	}
-	r.warnf("dates for %s (%d): %v",ev.Title, len(ev.DateStringList), ev.DateStringList)
+	r.warnf("dates for %s (%d): %v", ev.Title, len(ev.DateStringList), ev.DateStringList)
 	for _, ds := range ev.DateStringList {
 		loc, _ := time.LoadLocation("Europe/Berlin")
 		t, err := time.ParseInLocation("2006-01-02", ds, loc)
