@@ -28,8 +28,9 @@ body {
     .event+.separator {
         display: flex;
     }
-
-
+    .about pre {
+        overflow-x: auto;
+    }
 }
 
 /* components */

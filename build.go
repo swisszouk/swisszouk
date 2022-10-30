@@ -24,16 +24,18 @@ import (
 var tailwindBin = flag.String("tailwind", "tailwind/tailwindcss-windows-x64.exe", "tailwind binary")
 
 type Event struct {
-	Title      string `yaml:"title"`
-	Location   string
-	URL        string `yaml:"URL"`
-	City       string
-	DateString string    `yaml:"date"`
-	Date       time.Time `yaml:"date_date"`
-	Hour       string    `yaml:"time"`
-	Image      string    `yaml:"image"`
-	Hidden     bool      `yaml:"hidden"`
-	Price      string    `yaml:"price"`
+	Title          string `yaml:"title"`
+	Location       string
+	URL            string `yaml:"URL"`
+	City           string
+	DateString     string      `yaml:"date"`
+	DateStringList []string    `yaml:"dates"`
+	Date           time.Time   `yaml:"date_date"`
+	DateList       []time.Time `yaml:"dates_date"`
+	Hour           string      `yaml:"time"`
+	Image          string      `yaml:"image"`
+	Hidden         bool        `yaml:"hidden"`
+	Price          string      `yaml:"price"`
 
 	SourceFileName string
 
@@ -61,7 +63,7 @@ type renderer struct {
 
 var timeRe = regexp.MustCompile(`^\d?\d:\d\d$`)
 
-func (r *renderer) renderEvent(yamlText string) (*Event, error) {
+func (r *renderer) renderEvent(yamlText string) ([]Event, error) {
 	ev := &Event{}
 	if err := yaml.Unmarshal([]byte(yamlText), &ev); err != nil {
 		return nil, fmt.Errorf("bad front matter: %v", err)
@@ -78,12 +80,19 @@ func (r *renderer) renderEvent(yamlText string) (*Event, error) {
 	}
 	ev.City = city
 	if ev.DateString != "" {
+	ev.DateStringList = append(ev.DateStringList, ev.DateString)
+	}
+	r.warnf("dates for %s (%d): %v",ev.Title, len(ev.DateStringList), ev.DateStringList)
+	for _, ds := range ev.DateStringList {
 		loc, _ := time.LoadLocation("Europe/Berlin")
-		t, err := time.ParseInLocation("2006-01-02", ev.DateString, loc)
+		t, err := time.ParseInLocation("2006-01-02", ds, loc)
 		if err != nil {
 			return nil, fmt.Errorf("bad date %q: %w", ev.DateString, err)
 		}
-		ev.Date = t
+		ev.DateList = append(ev.DateList, t)
+	}
+	if len(ev.DateList) == 0 {
+		return nil, fmt.Errorf("no dates for %s", ev.Title)
 	}
 	if ev.Hour = strings.TrimSpace(ev.Hour); !timeRe.MatchString(ev.Hour) {
 		return nil, fmt.Errorf("bad time %q; should be HH:MM", ev.Hour)
@@ -97,8 +106,15 @@ func (r *renderer) renderEvent(yamlText string) (*Event, error) {
 	if _, err := os.ReadFile(path.Join(r.outDir, ev.Image)); err != nil {
 		return nil, fmt.Errorf("cannot read image %s: %w", ev.Image, err)
 	}
+	var ret []Event
+	for i, date := range ev.DateList {
+		e := *ev
+		e.Date = date
+		e.DateString = ev.DateStringList[i]
+		ret = append(ret, e)
+	}
 
-	return ev, nil
+	return ret, nil
 }
 
 func (r *renderer) warnf(format string, args ...any) {
@@ -114,18 +130,18 @@ func (r *renderer) renderAll() {
 	if err != nil {
 		r.warnf("%v", err)
 	}
-	var events []*Event
+	var events []Event
 	for _, fpath := range files {
 		content, err := os.ReadFile(fpath)
 		if err != nil {
 			r.warnf("Skipping %s: %v", fpath, err)
 			continue
 		}
-		ev, err := r.renderEvent(string(content))
+		evs, err := r.renderEvent(string(content))
 		if err != nil {
 			r.warnf("Skipping %s: %v", fpath, err)
 		} else {
-			events = append(events, ev)
+			events = append(events, evs...)
 		}
 	}
 	sort.Slice(events, func(i, j int) bool { return events[i].Date.Before(events[j].Date) })
@@ -197,6 +213,7 @@ func watch(f func()) {
 }
 
 func main() {
+	flag.Parse()
 
 	r := renderer{
 		sourceGlob: "events/*.yaml",
