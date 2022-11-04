@@ -65,7 +65,7 @@ var timeRe = regexp.MustCompile(`^\d?\d:\d\d$`)
 
 func (r *renderer) renderEvent(yamlText string) ([]Event, error) {
 	ev := &Event{}
-	if err := yaml.Unmarshal([]byte(yamlText), &ev); err != nil {
+	if err := yaml.UnmarshalStrict([]byte(yamlText), &ev); err != nil {
 		return nil, fmt.Errorf("bad front matter: %v", err)
 	}
 	if ev.Title = strings.TrimSpace(ev.Title); ev.Title == "" {
@@ -82,7 +82,9 @@ func (r *renderer) renderEvent(yamlText string) ([]Event, error) {
 	if ev.DateString != "" {
 		ev.DateStringList = append(ev.DateStringList, ev.DateString)
 	}
-	r.warnf("dates for %s (%d): %v", ev.Title, len(ev.DateStringList), ev.DateStringList)
+	if len(ev.DateStringList) > 1 {
+		r.warnf("multiple dates for %s (%d): %v", ev.Title, len(ev.DateStringList), ev.DateStringList)
+	}
 	for _, ds := range ev.DateStringList {
 		loc, _ := time.LoadLocation("Europe/Berlin")
 		t, err := time.ParseInLocation("2006-01-02", ds, loc)
