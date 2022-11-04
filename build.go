@@ -127,6 +127,16 @@ func (r *renderer) warnf(format string, args ...any) {
 	fmt.Printf(format, args...)
 }
 
+func allOld(evs []Event) bool {
+	cutoff := time.Now().Add(-24 * time.Hour)
+	for _, ev := range evs {
+		if ev.Date.After(cutoff) || ev.Date.IsZero() {
+			return false
+		}
+	}
+	return true
+}
+
 func (r *renderer) renderAll() {
 	files, err := filepath.Glob(r.sourceGlob)
 	if err != nil {
@@ -142,9 +152,14 @@ func (r *renderer) renderAll() {
 		evs, err := r.renderEvent(string(content))
 		if err != nil {
 			r.warnf("Skipping %s: %v", fpath, err)
-		} else {
-			events = append(events, evs...)
+			continue
 		}
+		if allOld(evs) {
+			r.warnf("removing %s, because too old", fpath)
+			os.Remove(fpath)
+			continue
+		}
+		events = append(events, evs...)
 	}
 	sort.Slice(events, func(i, j int) bool { return events[i].Date.Before(events[j].Date) })
 	for i := 0; i+1 < len(events); i++ {
