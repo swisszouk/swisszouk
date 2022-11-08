@@ -26,18 +26,19 @@ import (
 var tailwindBin = flag.String("tailwind", "tailwind/tailwindcss-windows-x64.exe", "tailwind binary")
 
 type Event struct {
-	Title          string `yaml:"title"`
-	Location       string
-	URL            string `yaml:"URL"`
-	City           string
-	DateString     string      `yaml:"date"`
-	DateStringList []string    `yaml:"dates"`
-	Date           time.Time   `yaml:"date_date"`
-	DateList       []time.Time `yaml:"dates_date"`
-	Hour           string      `yaml:"time"`
-	Image          string      `yaml:"image"`
-	Hidden         bool        `yaml:"hidden"`
-	Price          string      `yaml:"price"`
+	Title                string `yaml:"title"`
+	Location             string
+	URL                  string `yaml:"URL"`
+	City                 string
+	DateString           string      `yaml:"date"`
+	DateStringList       []string    `yaml:"dates"`
+	Date                 time.Time   `yaml:"date_date"`
+	DateList             []time.Time `yaml:"dates_date"`
+	Hour                 string      `yaml:"time"`
+	Image                string      `yaml:"image"`
+	Hidden               bool        `yaml:"hidden"`
+	Price                string      `yaml:"price"`
+	CustomScheduleString string      `yaml:"custom_schedule_string"`
 
 	SourceFileName string
 
@@ -153,15 +154,19 @@ type monthSummary struct {
 
 func (r *renderer) summarizeMonth(ms *monthSummary) {
 	if len(ms.evs) > 0 {
-		r.printf("📅 Upcoming events in %s 📅", ms.month)
+		r.printf("📅 Hello! Upcoming events in %s: 📅", ms.month)
 		packs := maps.Values(ms.evs)
 		sort.Slice(packs, func(i, j int) bool { return packs[i][0].Date.Before(packs[j][0].Date) })
 		for _, p := range packs {
-			var dates []string
-			for _, e := range p {
-				dates = append(dates, e.Date.Format("Monday, 2006-01-02"))
+			schedule := p[0].CustomScheduleString
+			if schedule == "" {
+				var dates []string
+				for _, e := range p {
+					dates = append(dates, e.Date.Format("Monday, Jan 2"))
+				}
+				schedule = strings.Join(dates, ", ")
 			}
-			r.printf("• %s (%s)", p[0].Title, strings.Join(dates, ", "))
+			r.printf("• %s (%s)", p[0].Title, schedule)
 		}
 		r.printf("")
 		r.printf("Up to date schedule ➡️ https://parties.swisszouk.ch")

@@ -8,6 +8,7 @@ dates:
     - 2022-12-23
     - 2022-12-30
 time: 21:00
+custom_schedule_string: "Fridays"
 price: 10
 URL: https://www.zoukessence.ch/shop/zouk-out/
 image: zoukout.jpg
