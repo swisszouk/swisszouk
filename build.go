@@ -17,6 +17,8 @@ import (
 	"strings"
 	"time"
 
+	"golang.org/x/exp/maps"
+
 	"github.com/fsnotify/fsnotify"
 	yaml "gopkg.in/yaml.v2"
 )
@@ -127,6 +129,13 @@ func (r *renderer) warnf(format string, args ...any) {
 	fmt.Printf(format, args...)
 }
 
+func (r *renderer) printf(format string, args ...any) {
+	if !strings.HasSuffix(format, "\n") {
+		format = format + "\n"
+	}
+	fmt.Printf(format, args...)
+}
+
 func allOld(evs []Event) bool {
 	cutoff := time.Now().Add(-24 * time.Hour)
 	for _, ev := range evs {
@@ -135,6 +144,37 @@ func allOld(evs []Event) bool {
 		}
 	}
 	return true
+}
+
+type monthSummary struct {
+	month time.Month
+	evs   map[string][]Event
+}
+
+func (r *renderer) summarizeMonth(ms *monthSummary) {
+	if len(ms.evs) > 0 {
+		r.printf("Upcoming events in %s:", ms.month)
+		packs := maps.Values(ms.evs)
+		sort.Slice(packs, func(i, j int) bool { return packs[i][0].Date.Before(packs[j][0].Date) })
+		for _, p := range packs {
+			var dates []string
+			for _, e := range p {
+				dates = append(dates, e.Date.Format("2006-01-02"))
+			}
+			r.printf("• %s (%s)", p[0].Title, strings.Join(dates, ", "))
+		}
+		r.printf("Up to date schedule: https://parties.swisszouk.ch")
+	}
+
+}
+
+func (r *renderer) summarizeEvent(ms *monthSummary, ev Event) {
+	if ms.month != ev.Date.Month() {
+		r.summarizeMonth(ms)
+		ms.evs = make(map[string][]Event)
+		ms.month = ev.Date.Month()
+	}
+	ms.evs[ev.Title] = append(ms.evs[ev.Title], ev)
 }
 
 func (r *renderer) renderAll() {
@@ -161,6 +201,7 @@ func (r *renderer) renderAll() {
 		}
 		events = append(events, evs...)
 	}
+	var ms monthSummary
 	sort.Slice(events, func(i, j int) bool { return events[i].Date.Before(events[j].Date) })
 	for i := 0; i+1 < len(events); i++ {
 		_, prevM, _ := events[i].Date.Date()
@@ -168,8 +209,10 @@ func (r *renderer) renderAll() {
 		if prevM != nextM {
 			events[i].SeparatorBelow = nextM.String()
 		}
-
+		r.summarizeEvent(&ms, events[i])
 	}
+	r.summarizeEvent(&ms, events[len(events)-1])
+	r.summarizeMonth(&ms)
 
 	dest := filepath.Join(r.outDir, "index.html")
 	sink, err := os.Create(dest)
