@@ -153,17 +153,18 @@ type monthSummary struct {
 
 func (r *renderer) summarizeMonth(ms *monthSummary) {
 	if len(ms.evs) > 0 {
-		r.printf("Upcoming events in %s:", ms.month)
+		r.printf("📅 Upcoming events in %s 📅", ms.month)
 		packs := maps.Values(ms.evs)
 		sort.Slice(packs, func(i, j int) bool { return packs[i][0].Date.Before(packs[j][0].Date) })
 		for _, p := range packs {
 			var dates []string
 			for _, e := range p {
-				dates = append(dates, e.Date.Format("2006-01-02"))
+				dates = append(dates, e.Date.Format("Monday, 2006-01-02"))
 			}
 			r.printf("• %s (%s)", p[0].Title, strings.Join(dates, ", "))
 		}
-		r.printf("Up to date schedule: https://parties.swisszouk.ch")
+		r.printf("")
+		r.printf("Up to date schedule ➡️ https://parties.swisszouk.ch")
 	}
 
 }
