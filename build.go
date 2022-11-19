@@ -78,8 +78,8 @@ func (r *renderer) renderEvent(yamlText string) ([]Event, error) {
 		return nil, errors.New("no location")
 	}
 	city, ok := cityMap[ev.City]
-	if ev.City != "" && !ok {
-		return nil, fmt.Errorf("unknown city %q, try one of: %v", ev.City, cityMap) // TODO maps.keys
+	if !ok {
+		return nil, fmt.Errorf("unknown city %q, try one of: %v", ev.City, maps.Keys(cityMap))
 	}
 	ev.City = city
 	if ev.DateString != "" {

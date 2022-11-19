@@ -23,10 +23,19 @@
     </div>
 
     <div class="pt-4 max-w-2xl m-auto relative z-20">
-      <h1 class="text-3xl font-bold text-title text-center italic"><a href="index.html">
+      <h1 class="text-3xl font-bold text-title italic ml-2"><a href="index.html">
           Swisszouk Parties
         </a></h1>
-      <a class="absolute top-0 right-0 not-italic text-3xl pt-4 pr-4 text-slate-500" href="about.html">☰</a>
+      <button class="absolute top-1 right-0 not-italic text-2xl pt-4 pr-4 text-slate-500"
+        onclick="toggleMenu()"><span id="burger" class="text-xl"></span> ☰</button>
+    </div>
+    <div id="menu" class="max-w-2xl m-auto max-h-0 overflow-hidden flex text-xl justify-end relative z-20 transition-max-height duration-150">
+      <div class="flex flex-col relative right-0 items-end inline-block mt-4 bg-black/[.5] rounded m-2">
+        <button class="mx-2 mt-1" onclick="selectCity('all')">Show all cities</button>
+        <button class="mx-2 mt-1" onclick="selectCity('Zürich')">Zürich</button>
+        <button class="mx-2 my-1" onclick="selectCity('Basel')">Basel</button>
+        <a href="about.html" class="pointer border-t px-2 py-1 self-stretch text-right">About</a>
+      </div>
     </div>
     <div id="content-container" class="max-w-2xl m-auto z-20 relative pb-12">
       
