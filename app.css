@@ -6,6 +6,10 @@
 body {
     font-family: 'Nunito', sans-serif;
 }
+h1 {
+    font-family: 'Bangers', sans-serif;
+    font-size:32px;
+}
 
 @layer components {
     .event-details-markdown li {

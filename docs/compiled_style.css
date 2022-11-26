@@ -645,6 +645,10 @@ video {
   margin-left: 0.5rem;
 }
 
+.mr-2 {
+  margin-right: 0.5rem;
+}
+
 .mt-4 {
   margin-top: 1rem;
 }
@@ -667,10 +671,6 @@ video {
 
 .mt-0 {
   margin-top: 0px;
-}
-
-.mr-2 {
-  margin-right: 0.5rem;
 }
 
 .block {
@@ -697,6 +697,10 @@ video {
   height: 0.5rem;
 }
 
+.max-h-12 {
+  max-height: 3rem;
+}
+
 .max-h-0 {
   max-height: 0px;
 }
@@ -715,6 +719,10 @@ video {
 
 .max-w-2xl {
   max-width: 42rem;
+}
+
+.max-w-sm {
+  max-width: 24rem;
 }
 
 .flex-none {
@@ -831,11 +839,6 @@ video {
   text-align: right;
 }
 
-.text-3xl {
-  font-size: 1.875rem;
-  line-height: 2.25rem;
-}
-
 .text-2xl {
   font-size: 1.5rem;
   line-height: 2rem;
@@ -855,21 +858,12 @@ video {
   font-weight: 700;
 }
 
-.italic {
-  font-style: italic;
-}
-
 .not-italic {
   font-style: normal;
 }
 
 .text-white\/\[0\.9\] {
   color: rgb(255 255 255 / 0.9);
-}
-
-.text-title {
-  --tw-text-opacity: 1;
-  color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 
 .text-slate-500 {
@@ -893,6 +887,11 @@ video {
 
 body {
   font-family: 'Nunito', sans-serif;
+}
+
+h1 {
+  font-family: 'Bangers', sans-serif;
+  font-size:32px;
 }
 
 /* components */
