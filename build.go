@@ -25,6 +25,8 @@ import (
 
 var tailwindBin = flag.String("tailwind", "tailwind/tailwindcss-windows-x64.exe", "tailwind binary")
 
+var summaryCity = flag.String("summary_city", "zrh", "City to print summary for")
+
 type Event struct {
 	Title                string `yaml:"title"`
 	Location             string
@@ -180,7 +182,9 @@ func (r *renderer) summarizeEvent(ms *monthSummary, ev Event) {
 		ms.evs = make(map[string][]Event)
 		ms.month = ev.Date.Month()
 	}
-	ms.evs[ev.Title] = append(ms.evs[ev.Title], ev)
+	if ev.City == *summaryCity {
+		ms.evs[ev.Title] = append(ms.evs[ev.Title], ev)
+	}
 }
 
 func (r *renderer) renderAll() {
@@ -280,6 +284,9 @@ func watch(f func()) {
 
 func main() {
 	flag.Parse()
+	if city := cityMap[*summaryCity]; city != "" {
+		*summaryCity = city
+	}
 
 	r := renderer{
 		sourceGlob: "events/*.yaml",
