@@ -156,7 +156,7 @@ type monthSummary struct {
 
 func (r *renderer) summarizeMonth(ms *monthSummary) {
 	if len(ms.evs) > 0 {
-		r.printf("📅 Hello! Upcoming events in %s: 📅", ms.month)
+		r.printf("📅 Hello! Upcoming events in %s, courtesy of http://parties.swisszouk.ch :", ms.month)
 		packs := maps.Values(ms.evs)
 		sort.Slice(packs, func(i, j int) bool { return packs[i][0].Date.Before(packs[j][0].Date) })
 		for _, p := range packs {
@@ -171,7 +171,6 @@ func (r *renderer) summarizeMonth(ms *monthSummary) {
 			r.printf("• %s (%s)", p[0].Title, schedule)
 		}
 		r.printf("")
-		r.printf("Up to date schedule ➡️ https://parties.swisszouk.ch")
 	}
 
 }
