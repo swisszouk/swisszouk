@@ -26,6 +26,7 @@ import (
 var tailwindBin = flag.String("tailwind", "tailwind/tailwindcss-windows-x64.exe", "tailwind binary")
 
 var summaryCity = flag.String("summary_city", "zrh", "City to print summary for")
+var showAll = flag.Bool("all", false, "Show events in the future")
 
 type Event struct {
 	Title                string `yaml:"title"`
@@ -187,6 +188,7 @@ func (r *renderer) summarizeEvent(ms *monthSummary, ev Event) {
 }
 
 func (r *renderer) renderAll() {
+	future := time.Date(time.Now().Year(), time.Now().Month()+3, 1, 0, 0, 0, 0, time.Local)
 	files, err := filepath.Glob(r.sourceGlob)
 	if err != nil {
 		r.warnf("%v", err)
@@ -208,7 +210,13 @@ func (r *renderer) renderAll() {
 			os.Remove(fpath)
 			continue
 		}
-		events = append(events, evs...)
+		for _, ev := range evs {
+			if ev.Date.After(future) && !*showAll {
+				r.warnf("skipping %s, because %v is too far in the future", ev.Title, ev.Date)
+			} else {
+				events = append(events, ev)
+			}
+		}
 	}
 	var ms monthSummary
 	sort.Slice(events, func(i, j int) bool { return events[i].Date.Before(events[j].Date) })
