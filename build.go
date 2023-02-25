@@ -53,7 +53,17 @@ func (e Event) Domain() string {
 	if err != nil {
 		return e.URL
 	}
-	return strings.TrimPrefix(u.Hostname(), "www.") + u.Path
+	var path string
+	if u.Path != "" {
+		path = "/..."
+	}
+	return strings.TrimPrefix(u.Hostname(), "www.") + path
+}
+
+func (e Event) ShortURL() string {
+	url := strings.TrimPrefix(e.URL, "https://")
+	url = strings.TrimPrefix(url, "http://")
+	return strings.TrimPrefix(url, "www.")
 }
 
 var cityMap = map[string]string{
