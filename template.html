@@ -2,13 +2,13 @@
 <div data-date="{{ .DateString }}" data-city="{{ .City }}"
   class="event mx-2 my-4  {{ if .Hidden }} hidden {{ end }}">
   <div class="rounded
-  {{ if .CustomScheduleString }} bg-black/[.5] ml-7 {{ else }}
+  {{ if .CustomScheduleString }} bg-black/[.6] ml-7 {{ else }}
     bg-black/[.8] {{ end }}">
   
 <div class="flex flex-col">
   <div class="flex-none flex flex-nowrap">
     <img src="{{ .Image }}" class="w-14 h-14 nonmini:w-20 nonmini:h-20 mr-2
-      {{ if .CustomScheduleString }} ml-[-1.75rem] rounded-l {{ else }} rounded-tl {{ end }}
+      {{ if .CustomScheduleString }} ml-[-1.75rem] rounded-l {{ else }} rounded border-white border m-[-4px] {{ end }}
     ">
     <div class="flex-grow my-2 mr-2 flex flex-col leading-none justify-between">
       <div class="flex flex-row flex-nowrap justify-between"><!-- title row -->
