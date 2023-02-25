@@ -1,11 +1,16 @@
 {{ define "event"}}
 <div data-date="{{ .DateString }}" data-city="{{ .City }}"
-  class="event mx-2 my-4 bg-black/[.5] rounded {{ if .Hidden }} hidden {{ end }}
-  {{ if not .CustomScheduleString }} bg-black/[.8] {{ end }}">
+  class="event mx-2 my-4  {{ if .Hidden }} hidden {{ end }}">
+  <div class="rounded
+  {{ if .CustomScheduleString }} bg-black/[.5] ml-7 {{ else }}
+    bg-black/[.8] {{ end }}">
+  
 <div class="flex flex-col">
   <div class="flex-none flex flex-nowrap">
-    <img src="{{ .Image }}" class="w-14 h-14 nonmini:w-16 nonmini:h-16 m-2 rounded">
-    <div class="flex-grow my-2 mr-2 flex flex-col justify-between">
+    <img src="{{ .Image }}" class="w-14 h-14 nonmini:w-20 nonmini:h-20 mr-2
+      {{ if .CustomScheduleString }} ml-[-1.75rem] rounded-l {{ else }} rounded-tl {{ end }}
+    ">
+    <div class="flex-grow my-2 mr-2 flex flex-col leading-none justify-between">
       <div class="flex flex-row flex-nowrap justify-between"><!-- title row -->
         <h2 class="mb-1 font-bold nonmini:text-2xl">{{ .Title }}</h2>
         <div class="mb-1 nonmini:text-2xl text-right">{{ .Date.Format "Monday, 02.01" }}</div>
@@ -21,13 +26,13 @@
     </div>
   </div>
   {{ if not .CustomScheduleString }} <!-- details row -->
-    <div class="mb-2 mx-2">
+    <div class="m-2">
       <div class="text-ellipsis overflow-hidden">
         <a href="{{ .URL }}" class="text-blue-300" style="white-space: nowrap">{{ .ShortURL }}</a>
       </div>
     </div>
   {{ end }}
-</div></div>
+</div></div></div>
 
 {{ if .SeparatorBelow }}
 <div class="separator items-center">
