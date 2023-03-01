@@ -221,9 +221,12 @@ func (r *renderer) renderAll() {
 			continue
 		}
 		for _, ev := range evs {
-			if ev.Date.After(future) && !*showAll {
+			switch {
+			case ev.Date.After(future) && !*showAll:
 				r.warnf("skipping %s, because %v is too far in the future", ev.Title, ev.Date)
-			} else {
+			case ev.Date.Before(time.Now()):
+				// skip past event
+			default:
 				events = append(events, ev)
 			}
 		}
