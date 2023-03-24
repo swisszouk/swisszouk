@@ -42,6 +42,7 @@ type Event struct {
 	Hidden               bool        `yaml:"hidden"`
 	Price                string      `yaml:"price"`
 	CustomScheduleString string      `yaml:"custom_schedule_string"`
+	Bullet               string
 
 	SourceFileName string
 
@@ -167,7 +168,7 @@ type monthSummary struct {
 
 func (r *renderer) summarizeMonth(ms *monthSummary) {
 	if len(ms.evs) > 0 {
-		r.printf("📅 Hello! Upcoming events in %s, courtesy of http://parties.swisszouk.ch :", ms.month)
+		r.printf("📅 Summary of events in %s, taken from http://parties.swisszouk.ch :", ms.month)
 		packs := maps.Values(ms.evs)
 		sort.Slice(packs, func(i, j int) bool { return packs[i][0].Date.Before(packs[j][0].Date) })
 		for _, p := range packs {
@@ -179,7 +180,11 @@ func (r *renderer) summarizeMonth(ms *monthSummary) {
 				}
 				schedule = strings.Join(dates, ", ")
 			}
-			r.printf("• %s (%s)", p[0].Title, schedule)
+			bullet := "🔸"
+			if p[0].Bullet != "" {
+				bullet = p[0].Bullet
+			}
+			r.printf("%s %s (%s)", bullet, p[0].Title, schedule)
 		}
 		r.printf("")
 	}
@@ -224,7 +229,7 @@ func (r *renderer) renderAll() {
 			switch {
 			case ev.Date.After(future) && !*showAll:
 				r.warnf("skipping %s, because %v is too far in the future", ev.Title, ev.Date)
-			case ev.Date.Before(time.Now()):
+			case ev.Date.Before(time.Now().Truncate(24 * time.Hour)):
 				// skip past event
 			default:
 				events = append(events, ev)
