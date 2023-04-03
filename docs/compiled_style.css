@@ -802,12 +802,12 @@ video {
   border-bottom-width: 2px;
 }
 
-.border-border {
+.border-white {
   --tw-border-opacity: 1;
   border-color: rgb(255 255 255 / var(--tw-border-opacity));
 }
 
-.border-white {
+.border-border {
   --tw-border-opacity: 1;
   border-color: rgb(255 255 255 / var(--tw-border-opacity));
 }
