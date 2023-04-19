@@ -168,9 +168,16 @@ type monthSummary struct {
 
 func (r *renderer) summarizeMonth(ms *monthSummary) {
 	if len(ms.evs) > 0 {
-		r.printf("📅 Summary of events in %s, taken from http://parties.swisszouk.ch :", ms.month)
+		r.printf("📅 *Upcoming parties in %s* 📅", ms.month)
 		packs := maps.Values(ms.evs)
-		sort.Slice(packs, func(i, j int) bool { return packs[i][0].Date.Before(packs[j][0].Date) })
+		sort.Slice(packs, func(i, j int) bool {
+			ics := packs[i][0].CustomScheduleString != ""
+			jcs := packs[j][0].CustomScheduleString != ""
+			if ics != jcs {
+				return jcs
+			}
+			return packs[i][0].Date.Before(packs[j][0].Date)
+		})
 		for _, p := range packs {
 			schedule := p[0].CustomScheduleString
 			if schedule == "" {
@@ -181,11 +188,17 @@ func (r *renderer) summarizeMonth(ms *monthSummary) {
 				schedule = strings.Join(dates, ", ")
 			}
 			bullet := "🔸"
-			if p[0].Bullet != "" {
-				bullet = p[0].Bullet
+			/*
+				if p[0].Bullet != "" {
+					bullet = p[0].Bullet
+				}
+			*/
+			if p[0].CustomScheduleString == "" {
+				bullet = "💜"
 			}
 			r.printf("%s %s (%s)", bullet, p[0].Title, schedule)
 		}
+		r.printf("Up to date calendar: http://parties.swisszouk.ch")
 		r.printf("")
 	}
 
