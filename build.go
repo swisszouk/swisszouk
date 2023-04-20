@@ -194,7 +194,7 @@ func (r *renderer) summarizeMonth(ms *monthSummary) {
 				}
 			*/
 			if p[0].CustomScheduleString == "" {
-				bullet = "💜"
+				bullet = "🔶"
 			}
 			r.printf("%s %s (%s)", bullet, p[0].Title, schedule)
 		}
