@@ -80,7 +80,7 @@ type renderer struct {
 
 var timeRe = regexp.MustCompile(`^\d?\d:\d\d$`)
 
-func (r *renderer) renderEvent(yamlText string) ([]Event, error) {
+func (r *renderer) renderEvent(fpath string, yamlText string) ([]Event, error) {
 	ev := &Event{}
 	if err := yaml.UnmarshalStrict([]byte(yamlText), &ev); err != nil {
 		return nil, fmt.Errorf("bad front matter: %v", err)
@@ -91,6 +91,9 @@ func (r *renderer) renderEvent(yamlText string) ([]Event, error) {
 	if ev.Location = strings.TrimSpace(ev.Location); ev.Location == "" {
 		return nil, errors.New("no location")
 	}
+	if ev.City == "" {
+		ev.City = filepath.Base(filepath.Dir(fpath))
+	}
 	city, ok := cityMap[ev.City]
 	if !ok {
 		return nil, fmt.Errorf("unknown city %q, try one of: %v", ev.City, maps.Keys(cityMap))
@@ -98,9 +101,6 @@ func (r *renderer) renderEvent(yamlText string) ([]Event, error) {
 	ev.City = city
 	if ev.DateString != "" {
 		ev.DateStringList = append(ev.DateStringList, ev.DateString)
-	}
-	if len(ev.DateStringList) > 1 {
-		r.warnf("multiple dates for %s (%d): %v", ev.Title, len(ev.DateStringList), ev.DateStringList)
 	}
 	for _, ds := range ev.DateStringList {
 		loc, _ := time.LoadLocation("Europe/Berlin")
@@ -188,11 +188,7 @@ func (r *renderer) summarizeMonth(ms *monthSummary) {
 				schedule = strings.Join(dates, ", ")
 			}
 			bullet := "🔸"
-			/*
-				if p[0].Bullet != "" {
-					bullet = p[0].Bullet
-				}
-			*/
+
 			if p[0].CustomScheduleString == "" {
 				bullet = "🔶"
 			}
@@ -228,7 +224,7 @@ func (r *renderer) renderAll() {
 			r.warnf("Skipping %s: %v", fpath, err)
 			continue
 		}
-		evs, err := r.renderEvent(string(content))
+		evs, err := r.renderEvent(fpath, string(content))
 		if err != nil {
 			r.warnf("Skipping %s: %v", fpath, err)
 			continue
@@ -327,7 +323,7 @@ func main() {
 	}
 
 	r := renderer{
-		sourceGlob: "events/*.yaml",
+		sourceGlob: "events/*/*.yaml",
 		outDir:     "docs",
 	}
 	r.renderAll()
