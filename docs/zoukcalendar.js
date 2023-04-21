@@ -46,10 +46,16 @@ var zoukcalendar = (() => {
             if (evDate < now) {
                 display = 'none'
             }
-            if (city !== 'all' && city !== evCity) {
+            let cityMatches = city === 'all' ||
+              city === evCity ||
+              city === 'Genève/Lausanne' && (evCity === 'Genève' || evCity === 'Lausanne')
+            if (!cityMatches) {
                 display = 'none'
             }
             el.style.display = display
+        })
+        document.querySelectorAll('.location-city').forEach(el => {
+            el.style.display = city === 'all' ? 'inline' : 'none'
         })
         document.getElementById('content-container').style.display = 'block'
     }

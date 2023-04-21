@@ -71,6 +71,7 @@ var cityMap = map[string]string{
 	"zrh":   "Zürich",
 	"basel": "Basel",
 	"bern":  "Bern",
+	"ge":    "Genève",
 }
 
 type renderer struct {
@@ -162,14 +163,14 @@ func allOld(evs []Event) bool {
 }
 
 type monthSummary struct {
-	month time.Month
-	evs   map[string][]Event
+	month     time.Month
+	evsByCity map[string]map[string][]Event
 }
 
 func (r *renderer) summarizeMonth(ms *monthSummary) {
-	if len(ms.evs) > 0 {
-		r.printf("📅 *Upcoming parties in %s* 📅", ms.month)
-		packs := maps.Values(ms.evs)
+	for city, evs := range ms.evsByCity {
+		r.printf("📅 *Upcoming parties in %s in %s* 📅", ms.month, city)
+		packs := maps.Values(evs)
 		sort.Slice(packs, func(i, j int) bool {
 			ics := packs[i][0].CustomScheduleString != ""
 			jcs := packs[j][0].CustomScheduleString != ""
@@ -194,21 +195,23 @@ func (r *renderer) summarizeMonth(ms *monthSummary) {
 			}
 			r.printf("%s %s (%s)", bullet, p[0].Title, schedule)
 		}
-		r.printf("Up to date calendar: http://parties.swisszouk.ch")
 		r.printf("")
 	}
-
+	r.printf("Up to date calendar: http://parties.swisszouk.ch")
+	r.printf("")
+	r.printf("")
 }
 
 func (r *renderer) summarizeEvent(ms *monthSummary, ev Event) {
 	if ms.month != ev.Date.Month() {
 		r.summarizeMonth(ms)
-		ms.evs = make(map[string][]Event)
+		ms.evsByCity = make(map[string]map[string][]Event)
 		ms.month = ev.Date.Month()
 	}
-	if ev.City == *summaryCity {
-		ms.evs[ev.Title] = append(ms.evs[ev.Title], ev)
+	if _, ok := ms.evsByCity[ev.City]; !ok {
+		ms.evsByCity[ev.City] = make(map[string][]Event)
 	}
+	ms.evsByCity[ev.City][ev.Title] = append(ms.evsByCity[ev.City][ev.Title], ev)
 }
 
 func (r *renderer) renderAll() {
@@ -237,7 +240,7 @@ func (r *renderer) renderAll() {
 		for _, ev := range evs {
 			switch {
 			case ev.Date.After(future) && !*showAll:
-				r.warnf("skipping %s, because %v is too far in the future", ev.Title, ev.Date)
+				// skip future event
 			case ev.Date.Before(time.Now().Truncate(24 * time.Hour)):
 				// skip past event
 			default:

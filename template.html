@@ -17,9 +17,11 @@
       </div>
       <div class="flex flex-row flex-nowrap justify-between items-baseline"><!-- location row -->
         {{ if .CustomScheduleString}}
-            <a href="{{ .URL }}" class="text-blue-300" style="white-space: nowrap">{{ .Domain }}</a>
+            <div>
+              <span class="location-city">{{ .City }}&ensp;&middot;&ensp;</span><a href="{{ .URL }}" class="text-blue-300" style="white-space: nowrap">{{ .Domain }}</a>
+            </div>
         {{ else }}
-          <div>{{ .Location }}</div>
+        <div>{{ .Location }}<span class="location-city">, {{ .City }}</span></div>
         {{ end }}
         <div class="text-right text-sm">{{.Price}} &ensp;&middot;&ensp; {{.Hour}}</div>
       </div>
@@ -88,6 +90,7 @@
         <button class="mx-2 mt-1" onclick="selectCity('all')">Show all cities</button>
         <button class="mx-2 mt-1" onclick="selectCity('Zürich')">Zürich</button>
         <button class="mx-2 my-1" onclick="selectCity('Basel')">Basel</button>
+        <button class="mx-2 my-1" onclick="selectCity('Genève')">Genève</button>
         <a href="about.html" class="pointer border-t px-2 py-1 self-stretch text-right">About</a>
       </div>
     </div>
