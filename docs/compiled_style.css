@@ -625,10 +625,6 @@ video {
   margin: 1rem;
 }
 
-.m-1 {
-  margin: 0.25rem;
-}
-
 .mx-4 {
   margin-left: 1rem;
   margin-right: 1rem;
@@ -688,6 +684,10 @@ video {
 
 .mb-1 {
   margin-bottom: 0.25rem;
+}
+
+.mt-1 {
+  margin-top: 0.25rem;
 }
 
 .ml-\[1\.2rem\] {
@@ -980,6 +980,10 @@ h1 {
 /* components */
 
 @media (min-width: 540px) {
+  .nonmini\:mt-2 {
+    margin-top: 0.5rem;
+  }
+
   .nonmini\:h-20 {
     height: 5rem;
   }

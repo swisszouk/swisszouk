@@ -21,14 +21,14 @@
               <span class="location-city">{{ .City }}&ensp;&middot;&ensp;</span><a href="{{ .URL }}" class="text-blue-300" style="white-space: nowrap">{{ .Domain }}</a>
             </div>
         {{ else }}
-        <div>{{ .Location }}<span class="location-city">, {{ .City }}</span></div>
+        <div><span class="location-city">{{ .City }}&ensp;&middot;&ensp;</span>{{ .Location }}</div>
         {{ end }}
         <div class="text-right text-sm">{{.Price}} &ensp;&middot;&ensp; {{.Hour}}</div>
       </div>
     </div>
   </div>
   {{ if not .CustomScheduleString }} <!-- details row -->
-    <div class="m-1">
+    <div class="m-2 mt-1 nonmini:mt-2">
       <div class="text-ellipsis overflow-hidden">
         <a href="{{ .URL }}" class="text-blue-300" style="white-space: nowrap">{{ .ShortURL }}</a>
       </div>
