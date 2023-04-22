@@ -25,18 +25,19 @@
 
     <div class="pt-4 max-w-2xl m-auto relative z-20">
       <h1 class="ml-2 max-w-sm"><a href="index.html">
-        <img src="logo.png" class="max-h-12 inline-block mr-2" />Parties
+        <img src="logo.png" class="h-12 inline-block mr-2" />Parties
         </a></h1>
-      <button class="absolute top-1 right-0 not-italic text-3xl pt-4 pr-4"
-        onclick="toggleMenu()"><span id="burger" class="text-2xl"></span> ☰</button>
+      <button class="absolute top-0 right-0 not-italic text-xl pt-4 pr-2"
+        onclick="toggleMenu()">
+        <div class=" py-2 px-4 font-bold"><span id="burger" class="text-2xl"></span>&nbsp;⚙️</div></button>
     </div>
-    <div id="menu" class="max-w-2xl m-auto max-h-0 overflow-hidden flex text-xl  justify-end relative z-20 transition-max-height duration-150">
-      <div class="flex flex-col relative right-0 items-end inline-block mt-4 bg-black/[.5] rounded m-2">
-        <button class="mx-2 mt-1" onclick="selectCity('all')">Show all cities</button>
-        <button class="mx-2 mt-1" onclick="selectCity('Zürich')">Zürich</button>
-        <button class="mx-2 my-1" onclick="selectCity('Basel')">Basel</button>
-        <button class="mx-2 my-1" onclick="selectCity('Genève')">Genève</button>
-        <a href="about.html" class="pointer border-t px-2 py-1 self-stretch text-right">About</a>
+    <div id="menu" class=" m-auto max-h-0 overflow-hidden flex text-2xl  justify-end relative z-20 transition-max-height duration-150">
+      <div class="flex flex-row flex-wrap relative right-0 items-end inline-block mt-4  m-2">
+        <button class="item" onclick="selectCity('all')">Show all cities</button>
+        <button class="item" onclick="selectCity('Zürich')">Zürich</button>
+        <button class="item" onclick="selectCity('Basel')">Basel</button>
+        <button class="item" onclick="selectCity('Genève')">Genève</button>
+        <a href="about.html" class="pointer item self-stretch text-right">About</a>
       </div>
     </div>
     <div id="content-container" class="max-w-2xl m-auto z-20 relative pb-12">

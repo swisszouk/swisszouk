@@ -35,6 +35,10 @@ h1 {
     .about pre {
         overflow-x: auto;
     }
+    #menu .item {
+        @apply px-2 py-1 m-2 bg-black/[.5];
+        border: 1px solid white;
+    }
 }
 
 /* components */
