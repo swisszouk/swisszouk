@@ -10,9 +10,11 @@ dates:
 - 2023-09-03
 - 2023-09-17
 
-custom_schedule_string: "every second Sunday"
+# custom_schedule_string: "every second Sunday"
+# Enable custom schedule from july
 city: zrh
 time: 18:00
 price: 0
 URL: https://www.instagram.com/swisszouk
 image: burkli.jpg
+size: big

@@ -43,6 +43,7 @@ type Event struct {
 	Price                string      `yaml:"price"`
 	CustomScheduleString string      `yaml:"custom_schedule_string"`
 	Bullet               string
+	Size                 string `yaml:"size"`
 
 	SourceFileName string
 
@@ -65,6 +66,9 @@ func (e Event) ShortURL() string {
 	url := strings.TrimPrefix(e.URL, "https://")
 	url = strings.TrimPrefix(url, "http://")
 	return strings.TrimPrefix(url, "www.")
+}
+func (e Event) IsBig() bool {
+	return e.Size == "big"
 }
 
 var cityMap = map[string]string{
@@ -122,6 +126,12 @@ func (r *renderer) renderEvent(fpath string, yamlText string) ([]Event, error) {
 	}
 	if !strings.HasPrefix(ev.URL, "http") {
 		ev.URL = "https://" + ev.URL
+	}
+	if ev.Size == "" {
+		ev.Size = "big"
+		if ev.CustomScheduleString != "" {
+			ev.Size = "small"
+		}
 	}
 	if _, err := os.ReadFile(path.Join(r.outDir, ev.Image)); err != nil {
 		return nil, fmt.Errorf("cannot read image %s: %w", ev.Image, err)
@@ -304,6 +314,9 @@ func watch(f func()) {
 	w.Add("tailwind.config.js")
 	w.Add("app.css")
 	w.Add("events")
+	w.Add("events/zrh")
+	w.Add("events/bsl")
+	w.Add("events/ge")
 
 	for {
 		select {
