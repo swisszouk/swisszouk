@@ -183,14 +183,16 @@ For the list of other zouk events see http://parties.swisszouk.ch
     {{ end }}
    </div>
   </div>
+  <!-- 🔶 -->
    <pre class="my-8 mx-4 select-all">
 {{ $month := .Month }}
+📅 *Upcoming parties in {{$month}}*
 {{- range $city, $evs := .EvsByCitySorted }}
 
-📅 *Upcoming parties in {{$month}} in {{ $city }}*
+🌍 *{{ $city }}*
 {{- range $evs -}}
 {{- $ev := index . 0 }}
-{{ if $ev.IsBig }}🔶{{ else }}🔸{{ end}} {{ $ev.Title }} ({{$ev.ScheduleString}})
+• {{ $ev.Title }} ({{$ev.ScheduleString}})
 {{- end -}}
 {{- end }}
 
