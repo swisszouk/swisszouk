@@ -18,6 +18,7 @@ import (
 	"time"
 
 	"golang.org/x/exp/maps"
+	"golang.org/x/exp/slices"
 
 	"github.com/fsnotify/fsnotify"
 	yaml "gopkg.in/yaml.v2"
@@ -69,6 +70,12 @@ func (e Event) ShortURL() string {
 }
 func (e Event) IsBig() bool {
 	return e.Size == "big"
+}
+func (e Event) ScheduleString() string {
+	if e.CustomScheduleString != "" {
+		return e.CustomScheduleString
+	}
+	return e.Date.Format("Mon, Jan 2")
 }
 
 var cityMap = map[string]string{
@@ -173,55 +180,51 @@ func allOld(evs []Event) bool {
 }
 
 type monthSummary struct {
-	month     time.Month
-	evsByCity map[string]map[string][]Event
+	Month     time.Month
+	EvsByCity map[string]map[string][]Event
 }
 
-func (r *renderer) summarizeMonth(ms *monthSummary) {
-	for city, evs := range ms.evsByCity {
-		r.printf("📅 *Upcoming parties in %s in %s* 📅", ms.month, city)
-		packs := maps.Values(evs)
-		sort.Slice(packs, func(i, j int) bool {
-			ics := packs[i][0].CustomScheduleString != ""
-			jcs := packs[j][0].CustomScheduleString != ""
-			if ics != jcs {
-				return jcs
-			}
-			return packs[i][0].Date.Before(packs[j][0].Date)
-		})
-		for _, p := range packs {
-			schedule := p[0].CustomScheduleString
-			if schedule == "" {
-				var dates []string
-				for _, e := range p {
-					dates = append(dates, e.Date.Format("Monday, Jan 2"))
-				}
-				schedule = strings.Join(dates, ", ")
-			}
-			bullet := "🔸"
-
-			if p[0].CustomScheduleString == "" {
-				bullet = "🔶"
-			}
-			r.printf("%s %s (%s)", bullet, p[0].Title, schedule)
+func (ms monthSummary) EvsByCitySorted() map[string][][]Event {
+	ret := make(map[string][][]Event)
+	for city, evmap := range ms.EvsByCity {
+		ret[city] = make([][]Event, 0)
+		for _, evs := range evmap {
+			ret[city] = append(ret[city], slices.Clone(evs))
 		}
-		r.printf("")
+		sort.Slice(ret[city], func(i, j int) bool {
+			ics := ret[city][i][0].IsBig()
+			jcs := ret[city][j][0].IsBig()
+			if ics != jcs {
+				return ics
+			}
+			return ret[city][i][0].Date.Before(ret[city][j][0].Date)
+		})
 	}
-	r.printf("Up to date calendar: http://parties.swisszouk.ch")
-	r.printf("")
-	r.printf("")
+	return ret
+}
+
+func (ms monthSummary) Images() []string {
+	set := make(map[string]bool)
+	for _, city := range ms.EvsByCity {
+		for _, evs := range city {
+			for _, e := range evs {
+				set[e.Image] = true
+			}
+		}
+	}
+	delete(set, "dancezouk-right.png")
+	return maps.Keys(set)
 }
 
 func (r *renderer) summarizeEvent(ms *monthSummary, ev Event) {
-	if ms.month != ev.Date.Month() {
-		r.summarizeMonth(ms)
-		ms.evsByCity = make(map[string]map[string][]Event)
-		ms.month = ev.Date.Month()
+	if ms.Month != ev.Date.Month() {
+		ms.EvsByCity = make(map[string]map[string][]Event)
+		ms.Month = ev.Date.Month()
 	}
-	if _, ok := ms.evsByCity[ev.City]; !ok {
-		ms.evsByCity[ev.City] = make(map[string][]Event)
+	if _, ok := ms.EvsByCity[ev.City]; !ok {
+		ms.EvsByCity[ev.City] = make(map[string][]Event)
 	}
-	ms.evsByCity[ev.City][ev.Title] = append(ms.evsByCity[ev.City][ev.Title], ev)
+	ms.EvsByCity[ev.City][ev.Title] = append(ms.EvsByCity[ev.City][ev.Title], ev)
 }
 
 func (r *renderer) renderAll() {
@@ -258,18 +261,21 @@ func (r *renderer) renderAll() {
 			}
 		}
 	}
+	var allSummaries []monthSummary
 	var ms monthSummary
 	sort.Slice(events, func(i, j int) bool { return events[i].Date.Before(events[j].Date) })
 	for i := 0; i+1 < len(events); i++ {
 		_, prevM, _ := events[i].Date.Date()
 		_, nextM, _ := events[i+1].Date.Date()
 		if prevM != nextM {
+			allSummaries = append(allSummaries, ms)
+			ms = monthSummary{}
 			events[i].SeparatorBelow = nextM.String()
 		}
 		r.summarizeEvent(&ms, events[i])
 	}
 	r.summarizeEvent(&ms, events[len(events)-1])
-	r.summarizeMonth(&ms)
+	allSummaries = append(allSummaries, ms)
 
 	dest := filepath.Join(r.outDir, "index.html")
 	sink, err := os.Create(dest)
@@ -296,6 +302,17 @@ func (r *renderer) renderAll() {
 		return
 	}
 	aboutSink.Close()
+
+	summarySink, err := os.Create(filepath.Join(r.outDir, "summary.html"))
+	if err != nil {
+		r.warnf("Open %s for writing: %v", "summary.html", err)
+		return
+	}
+	if err := mainT.ExecuteTemplate(summarySink, "summarypage", allSummaries); err != nil {
+		r.warnf("write summary.html: %v", err)
+		return
+	}
+	summarySink.Close()
 
 	cmd := exec.Command(*tailwindBin, "-i", "app.css", "-o", path.Join(r.outDir, "compiled_style.css"))
 	if err := cmd.Run(); err != nil {

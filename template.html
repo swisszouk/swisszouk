@@ -87,9 +87,9 @@
       <div id="menu" class="max-w-2xl m-auto max-h-0 overflow-hidden flex text-2xl  justify-end relative z-20 transition-max-height duration-150">
         <div class="flex flex-row flex-wrap relative right-0 items-end inline-block mt-4  m-2">
           <button class="item" onclick="selectCity('all')">Show all cities</button>
-          <button class="item" onclick="selectCity('Zürich')">Zürich</button>
           <button class="item" onclick="selectCity('Basel')">Basel</button>
           <button class="item" onclick="selectCity('Genève')">Genève</button>
+          <button class="item" onclick="selectCity('Zürich')">Zürich</button>
           <a href="about.html" class="pointer item self-stretch text-right">About</a>
         </div>
       </div>
@@ -162,6 +162,41 @@ For the list of other zouk events see http://parties.swisszouk.ch
   <h2 class="mb-2 text-xl">About the authors</h2>
   <p>The events are organized by multiple independent event organizers and dance schools.</p>
   <p>Website copyright: Wojtek, Daria and Claudia.</p>
+</div>
+{{ template "htmlfooter" }}
+{{ end }}
+
+
+{{ define "summarypage" }}
+{{ template "htmlheader" }}
+
+<div class="max-w-md">
+  {{ range . }}
+  <div class="p-4 pl-6">
+    <h1 class="m-0 flex justify-between">
+      <span>parties.<img src="logo.png" class="h-12 inline-block" />.ch</span>
+      <span class="mr-4">{{.Month }}</span>
+      </h1>
+   <div class="grid grid-cols-4 justify-between my-8 gap-4 ">
+    {{ range .Images }}
+    <img src="{{ . }}" class="w-20 h-20 rounded border-white border ">
+    {{ end }}
+   </div>
+  </div>
+   <pre class="my-8 mx-4 select-all">
+{{ $month := .Month }}
+{{- range $city, $evs := .EvsByCitySorted }}
+
+📅 *Upcoming parties in {{$month}} in {{ $city }}*
+{{- range $evs -}}
+{{- $ev := index . 0 }}
+{{ if $ev.IsBig }}🔶{{ else }}🔸{{ end}} {{ $ev.Title }} ({{$ev.ScheduleString}})
+{{- end -}}
+{{- end }}
+
+Up to date calendar: http://parties.swisszouk.ch
+   </pre>
+  {{ end }}
 </div>
 {{ template "htmlfooter" }}
 {{ end }}
