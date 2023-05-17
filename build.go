@@ -179,26 +179,34 @@ func allOld(evs []Event) bool {
 	return true
 }
 
-type monthSummary struct {
-	Month     time.Month
-	EvsByCity map[string]map[string][]Event
+type SummaryKey struct {
+	Title    string
+	Schedule string
+}
+type SummaryEntry struct {
+	SummaryKey
+	FirstDate time.Time
+	IsBig     bool
+	Img       string
 }
 
-func (ms monthSummary) EvsByCitySorted() map[string][][]Event {
-	ret := make(map[string][][]Event)
+func (se SummaryEntry) LessThan(other SummaryEntry) bool {
+	if se.IsBig != other.IsBig {
+		return se.IsBig
+	}
+	return se.FirstDate.Before(other.FirstDate)
+}
+
+type monthSummary struct {
+	Month     time.Month
+	EvsByCity map[string]map[SummaryKey]SummaryEntry
+}
+
+func (ms monthSummary) EvsByCitySorted() map[string][]SummaryEntry {
+	ret := make(map[string][]SummaryEntry)
 	for city, evmap := range ms.EvsByCity {
-		ret[city] = make([][]Event, 0)
-		for _, evs := range evmap {
-			ret[city] = append(ret[city], slices.Clone(evs))
-		}
-		sort.Slice(ret[city], func(i, j int) bool {
-			ics := ret[city][i][0].IsBig()
-			jcs := ret[city][j][0].IsBig()
-			if ics != jcs {
-				return ics
-			}
-			return ret[city][i][0].Date.Before(ret[city][j][0].Date)
-		})
+		ret[city] = maps.Values(evmap)
+		slices.SortFunc(ret[city], SummaryEntry.LessThan)
 	}
 	return ret
 }
@@ -207,9 +215,7 @@ func (ms monthSummary) Images() []string {
 	set := make(map[string]bool)
 	for _, city := range ms.EvsByCity {
 		for _, evs := range city {
-			for _, e := range evs {
-				set[e.Image] = true
-			}
+			set[evs.Img] = true
 		}
 	}
 	delete(set, "dancezouk-right.png")
@@ -218,13 +224,24 @@ func (ms monthSummary) Images() []string {
 
 func (r *renderer) summarizeEvent(ms *monthSummary, ev Event) {
 	if ms.Month != ev.Date.Month() {
-		ms.EvsByCity = make(map[string]map[string][]Event)
+		ms.EvsByCity = make(map[string]map[SummaryKey]SummaryEntry)
 		ms.Month = ev.Date.Month()
 	}
-	if _, ok := ms.EvsByCity[ev.City]; !ok {
-		ms.EvsByCity[ev.City] = make(map[string][]Event)
+	se := SummaryEntry{
+		SummaryKey: SummaryKey{
+			Title:    ev.Title,
+			Schedule: ev.ScheduleString(),
+		},
+		IsBig:     ev.Size == "big",
+		Img:       ev.Image,
+		FirstDate: ev.Date,
 	}
-	ms.EvsByCity[ev.City][ev.Title] = append(ms.EvsByCity[ev.City][ev.Title], ev)
+	if _, ok := ms.EvsByCity[ev.City]; !ok {
+		ms.EvsByCity[ev.City] = make(map[SummaryKey]SummaryEntry)
+	}
+	if old, ok := ms.EvsByCity[ev.City][se.SummaryKey]; !ok || old.FirstDate.Before(se.FirstDate) {
+		ms.EvsByCity[ev.City][se.SummaryKey] = se
+	}
 }
 
 func (r *renderer) renderAll() {

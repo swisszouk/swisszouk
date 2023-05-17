@@ -190,9 +190,8 @@ For the list of other zouk events see http://parties.swisszouk.ch
 {{- range $city, $evs := .EvsByCitySorted }}
 
 🌍 *{{ $city }}*
-{{- range $evs -}}
-{{- $ev := index . 0 }}
-• {{ $ev.Title }} ({{$ev.ScheduleString}})
+{{- range $evs }}
+• {{ .Title }} ({{.Schedule}})
 {{- end -}}
 {{- end }}
 
