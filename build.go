@@ -128,7 +128,7 @@ func (r *renderer) renderEvent(fpath string, yamlText string) ([]Event, error) {
 	if ev.Hour = strings.TrimSpace(ev.Hour); !timeRe.MatchString(ev.Hour) {
 		return nil, fmt.Errorf("bad time %q; should be HH:MM", ev.Hour)
 	}
-	if ev.Price != "" && !strings.HasSuffix(ev.Price, "CHF") {
+	if ev.Price != "" && ev.Price != "donations" && !strings.HasSuffix(ev.Price, "CHF") {
 		ev.Price = strings.TrimSpace(ev.Price) + " CHF"
 	}
 	if !strings.HasPrefix(ev.URL, "http") {
