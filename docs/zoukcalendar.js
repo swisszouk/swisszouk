@@ -58,6 +58,8 @@ var zoukcalendar = (() => {
             el.style.display = city === 'all' ? 'inline' : 'none'
         })
         document.getElementById('content-container').style.display = 'block'
+        const intro = document.getElementById('intro-box');
+        intro.style.display = city === 'all' ? 'block' : 'none';
     }
 
     if (document.readyState == 'loading') {

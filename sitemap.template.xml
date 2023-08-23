@@ -7,8 +7,13 @@
         <lastmod>{{ . }}</lastmod>
         <changefreq>monthly</changefreq>
         <priority>1.0</priority>
-    </url>    <url>
+    </url>
+    <url>
         <loc>https://parties.swisszouk.ch/about.html</loc>
+        <lastmod>{{ . }}</lastmod>
+    </url> 
+    <url>
+        <loc>https://parties.swisszouk.ch/schools.html</loc>
         <lastmod>{{ . }}</lastmod>
     </url>
 </urlset>

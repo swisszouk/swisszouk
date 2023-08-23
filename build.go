@@ -246,6 +246,20 @@ func (r *renderer) summarizeEvent(ms *monthSummary, ev Event) {
 	}
 }
 
+type School struct {
+	URL         string
+	ShortName   string
+	Description string
+}
+
+func (s School) HumanURL() string {
+	if s.ShortName != "" {
+		return s.ShortName
+	}
+	short := strings.TrimPrefix(s.URL, "https://")
+	return strings.TrimPrefix(short, "www.")
+}
+
 func (r *renderer) renderAll() {
 	future := time.Date(time.Now().Year(), time.Now().Month()+3, 1, 0, 0, 0, 0, time.Local)
 	files, err := filepath.Glob(r.sourceGlob)
@@ -339,16 +353,38 @@ func (r *renderer) renderAll() {
 		return
 	}
 	sitemapT := texttemplate.Must(texttemplate.ParseFiles("sitemap.template.xml"))
-	if err := sitemapT.Execute(sitemapSink, time.Now().Format("006-01-02 ")); err != nil {
+	if err := sitemapT.Execute(sitemapSink, time.Now().Format("2006-01-02")); err != nil {
 		r.warnf("write sitemap: %w", err)
 		return
 	}
+	sitemapSink.Close()
+
+	schools := []School{
+		{"https://zoukessence.ch", "", "Brazillian zouk in Zürich."},
+		{"https://lambaswiss.com", "", "Lambada and zouk in Zürich."},
+		{"https://www.zoukies.ch", "", "Dance embodiment, zouk and meditation. Zürich and Basel."},
+		{"https://dancezouk.ch", "", "Brazillian zouk in Zürich."},
+		{"https://www.zoukarium.com", "", "Brazillian zouk in Basel and Freiburg."},
+		{"https://studiokehl.my.canva.site/brazilian-zouk-in-basel", "BaselZouk", "Brazillian zouk in Basel."},
+	}
+	sort.Slice(schools, func(i, j int) bool { return schools[i].HumanURL() < schools[j].HumanURL() })
+	schoolsSink, err := os.Create(filepath.Join(r.outDir, "schools.html"))
+	if err != nil {
+		r.warnf("open schools.html: %w", err)
+		return
+	}
+	if err := mainT.ExecuteTemplate(schoolsSink, "schools", schools); err != nil {
+		r.warnf("write schools: %v", err)
+		return
+	}
+	schoolsSink.Close()
 
 	cmd := exec.Command(*tailwindBin, "-i", "app.css", "-o", path.Join(r.outDir, "compiled_style.css"))
 	if err := cmd.Run(); err != nil {
 		r.warnf("Tailwind failed: %v", err)
 		return
 	}
+
 	r.warnf("Tailwind done.")
 }
 

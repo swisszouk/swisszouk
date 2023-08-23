@@ -639,6 +639,11 @@ video {
   margin-bottom: 3rem;
 }
 
+.my-8 {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
 .my-4 {
   margin-top: 1rem;
   margin-bottom: 1rem;
@@ -652,11 +657,6 @@ video {
 .my-\[-10px\] {
   margin-top: -10px;
   margin-bottom: -10px;
-}
-
-.my-8 {
-  margin-top: 2rem;
-  margin-bottom: 2rem;
 }
 
 .ml-2 {
@@ -681,10 +681,6 @@ video {
 
 .mt-16 {
   margin-top: 4rem;
-}
-
-.mb-0 {
-  margin-bottom: 0px;
 }
 
 .ml-4 {
@@ -917,12 +913,12 @@ video {
   background-color: rgb(0 0 0 / .3);
 }
 
-.bg-black\/\[\.6\] {
-  background-color: rgb(0 0 0 / .6);
-}
-
 .bg-black\/\[\.8\] {
   background-color: rgb(0 0 0 / .8);
+}
+
+.bg-black\/\[\.6\] {
+  background-color: rgb(0 0 0 / .6);
 }
 
 .bg-gradient-to-r {
@@ -972,10 +968,6 @@ video {
 
 .pr-2 {
   padding-right: 0.5rem;
-}
-
-.pb-12 {
-  padding-bottom: 3rem;
 }
 
 .pt-24 {
