@@ -20,6 +20,8 @@ import (
 	"golang.org/x/exp/maps"
 	"golang.org/x/exp/slices"
 
+	texttemplate "text/template"
+
 	"github.com/fsnotify/fsnotify"
 	yaml "gopkg.in/yaml.v2"
 )
@@ -330,6 +332,17 @@ func (r *renderer) renderAll() {
 		return
 	}
 	summarySink.Close()
+
+	sitemapSink, err := os.Create(filepath.Join(r.outDir, "sitemap.xml"))
+	if err != nil {
+		r.warnf("create sitemap.xml: %v", err)
+		return
+	}
+	sitemapT := texttemplate.Must(texttemplate.ParseFiles("sitemap.template.xml"))
+	if err := sitemapT.Execute(sitemapSink, time.Now().Format("006-01-02 ")); err != nil {
+		r.warnf("write sitemap: %w", err)
+		return
+	}
 
 	cmd := exec.Command(*tailwindBin, "-i", "app.css", "-o", path.Join(r.outDir, "compiled_style.css"))
 	if err := cmd.Run(); err != nil {

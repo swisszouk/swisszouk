@@ -1,6 +1,6 @@
 {{ define "event"}}
 <div data-date="{{ .DateString }}" data-city="{{ .City }}"
-  class="event ml-4 mr-2 my-4  {{ if .Hidden }} hidden {{ end }} {{ if .IsBig }} rounded border border-white {{ end }}">
+  class="event ml-4 mr-2 my-4  {{ if .Hidden }} hidden {{ end }} {{ if .IsBig }} rounded border border-white {{ end }} scriptonly">
   <div class="rounded
   {{ if not .IsBig }} bg-black/[.6] ml-[1.2rem] {{ else }}
     bg-black/[.8] {{ end }}">
@@ -50,6 +50,12 @@
 
 </div>
 {{ end }}
+
+<noscript>
+  <div>
+    {{ .Title }} on {{ .Date.Format "Monday, 02.01" }} in {{ .Location }} in {{ .City }}. Start at {{ .Hour }}. <a href="{{ .URL }}">{{ .Domain }}</a>
+  </div>
+</noscript>
 {{end}}
 
 
@@ -76,6 +82,7 @@
   <meta property="og:description" content="Calendar of zouk events in Switzerland." />
   <meta property="og:image" content="/thumbnail.png" />
   <meta property="og:type" content="webpage" />
+  <noscript><style> .scriptonly { display: none !important } </style></noscript>
 
 </head>
 
@@ -111,8 +118,13 @@
       {{ end }}
 
       {{ define "htmlfooter"}}
-    </div>
-  </div>
+  <div class="mt-16 mb-0 text-slate-400">
+    Swisszouk Parties lists all Zouk events in Switzerland. We have zouk dancing socials in Zürich, Basel and Genève.
+    <a class="text-blue-300" href="/about.html">More info here.</a>
+  </div> 
+ </div>
+</div>
+
 </body>
 
 </html>
