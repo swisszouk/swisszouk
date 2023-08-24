@@ -250,6 +250,7 @@ type School struct {
 	URL         string
 	ShortName   string
 	Description string
+	Quote       string
 }
 
 func (s School) HumanURL() string {
@@ -360,12 +361,18 @@ func (r *renderer) renderAll() {
 	sitemapSink.Close()
 
 	schools := []School{
-		{"https://zoukessence.ch", "", "Brazillian zouk in Zürich."},
-		{"https://lambaswiss.com", "", "Lambada and zouk in Zürich."},
-		{"https://www.zoukies.ch", "", "Dance embodiment, zouk and meditation. Zürich and Basel."},
-		{"https://dancezouk.ch", "", "Brazillian zouk in Zürich."},
-		{"https://www.zoukarium.com", "", "Brazillian zouk in Basel and Freiburg."},
-		{"https://studiokehl.my.canva.site/brazilian-zouk-in-basel", "BaselZouk", "Brazillian zouk in Basel."},
+		{"https://zoukessence.ch", "", "School for Brazillian zouk in Zürich.",
+			"Neben Kursen und Workshops haben wir mehrere regelmässige Partys und internationale Lehrer besuchen uns oft und gerne für Wochenende oder gleich mehrere Wochen."},
+		{"https://lambaswiss.com", "", "School for lambada and zouk in Zürich.",
+			"In unseren Workshops, Kursen und Privatstunden lernst du durch Lambada & Zouk Tanztechniken, die wichtigsten Grundlagen und dein Rhythmusgefühl wird trainiert."},
+		{"https://www.zoukies.ch", "", "Dance embodiment, zouk and meditation. Zürich and Basel.",
+			"A dance school and community for people who want to free their mind and awaken their body."},
+		{"https://dancezouk.ch", "", "Brazillian zouk in Zürich.",
+			"Join our DanceZouk Family and together we will take your dancing to the next level."},
+		{"https://www.zoukarium.com", "", "Brazillian zouk in Basel and Freiburg.",
+			"Wir fokussieren uns vor allem auf die Improvisation, das Gefühl der Freiheit und die Beziehung zueinander."},
+		{"https://studiokehl.my.canva.site/brazilian-zouk-in-basel", "BaselZouk", "Brazillian zouk in Basel.",
+			"Our team is full of passion for dance. Our goal is to build up the Brazilian Zouk community in Basel."},
 	}
 	sort.Slice(schools, func(i, j int) bool { return schools[i].HumanURL() < schools[j].HumanURL() })
 	schoolsSink, err := os.Create(filepath.Join(r.outDir, "schools.html"))

@@ -249,13 +249,19 @@ Up to date calendar: http://parties.swisszouk.ch
 {{ define "schools" }}
 {{ template "htmlheader" }}
  <h1>Learn Zouk in Switzerland</h1>
- 
+ <div class="bg-black/[.5] rounded p-2 m-4">
+  An alphabetical list of dance schools offering zouk classes in Switzerland.
+ </div>
   {{ range . }}
 <div class="bg-black/[.5] rounded p-2 m-4">
-<a class="text-blue-300" href="{{ .URL }}">{{ .HumanURL}}</a>
+<a class="text-blue-300 text-xl" href="{{ .URL }}">{{ .HumanURL}}</a>
 <p>{{ .Description }}</p>
+<blockquote class="border-l-2 pl-2 my-2 italic">{{.Quote}}</blockquote>
 </div>
   {{ end }}
+  <div class="bg-black/[.5] rounded p-2 m-4">
+    Is a school missing? Let me know at zouk@ptak.me and I will add it!
+  </div>
 
 </div>
 {{ end }}

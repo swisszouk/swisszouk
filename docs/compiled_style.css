@@ -659,6 +659,11 @@ video {
   margin-bottom: -10px;
 }
 
+.my-2 {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
 .ml-2 {
   margin-left: 0.5rem;
 }
@@ -890,6 +895,10 @@ video {
   border-bottom-width: 2px;
 }
 
+.border-l-2 {
+  border-left-width: 2px;
+}
+
 .border-white {
   --tw-border-opacity: 1;
   border-color: rgb(255 255 255 / var(--tw-border-opacity));
@@ -974,6 +983,10 @@ video {
   padding-top: 6rem;
 }
 
+.pl-2 {
+  padding-left: 0.5rem;
+}
+
 .pl-6 {
   padding-left: 1.5rem;
 }
@@ -999,6 +1012,10 @@ video {
 
 .font-bold {
   font-weight: 700;
+}
+
+.italic {
+  font-style: italic;
 }
 
 .not-italic {
