@@ -299,14 +299,15 @@ func (r *renderer) renderAll() {
 	var ms monthSummary
 	sort.Slice(events, func(i, j int) bool { return events[i].Date.Before(events[j].Date) })
 	for i := 0; i+1 < len(events); i++ {
+		r.summarizeEvent(&ms, events[i])
 		_, prevM, _ := events[i].Date.Date()
 		_, nextM, _ := events[i+1].Date.Date()
 		if prevM != nextM {
 			allSummaries = append(allSummaries, ms)
+
 			ms = monthSummary{}
 			events[i].SeparatorBelow = nextM.String()
 		}
-		r.summarizeEvent(&ms, events[i])
 	}
 	r.summarizeEvent(&ms, events[len(events)-1])
 	allSummaries = append(allSummaries, ms)
