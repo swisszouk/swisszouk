@@ -1,4 +1,4 @@
-title: Zouk Practica
+title: DanceZouk Practica
 location: Studio OneSpace
 dates:
 
@@ -18,8 +18,9 @@ dates:
     - 2023-11-20
     - 2023-11-27
 
+
 time: 21:15
-custom_schedule_string: "Mondays"
+custom_schedule_string: "Mondays and Thursdays" # single summary entry for two different events
 price: 5
 URL: https://dancezouk.ch/events/zoukpractica/
 image: dancezouk-right.png

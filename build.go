@@ -238,6 +238,9 @@ func (r *renderer) summarizeEvent(ms *monthSummary, ev Event) {
 		Img:       ev.Image,
 		FirstDate: ev.Date,
 	}
+	if strings.Contains(se.SummaryKey.Schedule, "#SUMMARY_SKIP") {
+		return
+	}
 	if _, ok := ms.EvsByCity[ev.City]; !ok {
 		ms.EvsByCity[ev.City] = make(map[SummaryKey]SummaryEntry)
 	}

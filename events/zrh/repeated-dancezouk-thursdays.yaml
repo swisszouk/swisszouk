@@ -1,4 +1,4 @@
-title: Zouk Club
+title: DanceZouk Practica
 location: Studio OneSpace
 dates:
 
@@ -20,7 +20,7 @@ dates:
     - 2023-11-30
 
 time: 20:45
-custom_schedule_string: "Thursdays"
+custom_schedule_string: "#SUMMARY_SKIP" # single summary entry with mondays
 price: 10
 URL: https://dancezouk.ch/events/zoukclub-intermediate-thursday/
 image: dancezouk-right.png
