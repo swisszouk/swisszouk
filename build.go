@@ -265,7 +265,7 @@ func (s School) HumanURL() string {
 }
 
 func (r *renderer) renderAll() {
-	future := time.Date(time.Now().Year(), time.Now().Month()+3, 1, 0, 0, 0, 0, time.Local)
+	future := time.Date(time.Now().Year(), time.Now().Month()+4, 1, 0, 0, 0, 0, time.Local)
 	files, err := filepath.Glob(r.sourceGlob)
 	if err != nil {
 		r.warnf("%v", err)
