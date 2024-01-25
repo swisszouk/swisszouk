@@ -1,14 +1,7 @@
 title: Lambada practica
 time: 20:15
-dates:
-- 2024-01-08
-- 2024-01-15
-- 2024-01-22
-- 2024-01-29
-- 2024-02-05
-- 2024-02-12
-- 2024-02-19
-- 2024-02-26
+
+date_spec: "RRULE:FREQ=WEEKLY;BYDAY=MO"
 price: 5
 location: Lambaswiss
 custom_schedule_string: Mondays

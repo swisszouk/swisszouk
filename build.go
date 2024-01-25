@@ -23,6 +23,7 @@ import (
 	texttemplate "text/template"
 
 	"github.com/fsnotify/fsnotify"
+	"github.com/teambition/rrule-go"
 	yaml "gopkg.in/yaml.v2"
 )
 
@@ -32,13 +33,17 @@ var summaryCity = flag.String("summary_city", "zrh", "City to print summary for"
 var showAll = flag.Bool("all", false, "Show events in the future")
 
 type Event struct {
-	Title                string `yaml:"title"`
-	Location             string
-	URL                  string `yaml:"URL"`
-	City                 string
-	DateString           string      `yaml:"date"`
-	DateStringList       []string    `yaml:"dates"`
-	Date                 time.Time   `yaml:"date_date"`
+	Title          string `yaml:"title"`
+	Location       string
+	URL            string `yaml:"URL"`
+	City           string
+	DateString     string    `yaml:"date"`
+	DateStringList []string  `yaml:"dates"`
+	Date           time.Time `yaml:"date_date"`
+
+	// See https://github.com/teambition/rrule-go/blob/master/rrule.go :
+	DateSpec string `yaml:"date_spec"`
+
 	DateList             []time.Time `yaml:"dates_date"`
 	Hour                 string      `yaml:"time"`
 	Image                string      `yaml:"image"`
@@ -116,13 +121,28 @@ func (r *renderer) renderEvent(fpath string, yamlText string) ([]Event, error) {
 	if ev.DateString != "" {
 		ev.DateStringList = append(ev.DateStringList, ev.DateString)
 	}
-	for _, ds := range ev.DateStringList {
-		loc, _ := time.LoadLocation("Europe/Berlin")
-		t, err := time.ParseInLocation("2006-01-02", ds, loc)
+	if len(ev.DateStringList) > 0 && ev.DateSpec != "" {
+		return nil, fmt.Errorf("cannot set both date_list and date_spec")
+	}
+	if ev.DateSpec != "" {
+		rr, err := rrule.StrToRRule(ev.DateSpec)
 		if err != nil {
-			return nil, fmt.Errorf("bad date %q: %w", ev.DateString, err)
+			return nil, fmt.Errorf("Bad rrule %q: %w", ev.DateSpec, err)
 		}
-		ev.DateList = append(ev.DateList, t)
+		//rr.Dtstart = time.Now()
+		ev.DateList = rr.All()
+		for _, d := range ev.DateList {
+			ev.DateStringList = append(ev.DateStringList, d.Format("2006-01-02"))
+		}
+	} else {
+		for _, ds := range ev.DateStringList {
+			loc, _ := time.LoadLocation("Europe/Berlin")
+			t, err := time.ParseInLocation("2006-01-02", ds, loc)
+			if err != nil {
+				return nil, fmt.Errorf("bad date %q: %w", ev.DateString, err)
+			}
+			ev.DateList = append(ev.DateList, t)
+		}
 	}
 	if len(ev.DateList) == 0 {
 		return nil, fmt.Errorf("no dates for %s", ev.Title)
