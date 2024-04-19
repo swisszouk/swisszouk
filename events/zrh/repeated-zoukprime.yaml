@@ -1,6 +1,12 @@
 title: Zouk Prime
 location: Silbando
-date_spec: "RRULE:FREQ=MONTHLY;BYDAY=3SA"
+date_spec: |
+  DTSTART:19970101T000000Z
+  RRULE:FREQ=MONTHLY;BYDAY=3SA
+  EXDATE:20240615
+  RDATE:20240629
+  EXDATE:20240921
+  RDATE:20240928
 time: 20:30
 price: 15 CHF
 URL: https://www.zoukessence.ch/shop/zoukprime/

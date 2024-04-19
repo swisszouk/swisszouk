@@ -125,12 +125,12 @@ func (r *renderer) renderEvent(fpath string, yamlText string) ([]Event, error) {
 		return nil, fmt.Errorf("cannot set both date_list and date_spec")
 	}
 	if ev.DateSpec != "" {
-		rr, err := rrule.StrToRRule(ev.DateSpec)
+		rrs, err := rrule.StrToRRuleSet(ev.DateSpec)
 		if err != nil {
-			return nil, fmt.Errorf("Bad rrule %q: %w", ev.DateSpec, err)
+			return nil, fmt.Errorf("bad rrule %q: %w", ev.DateSpec, err)
 		}
 		//rr.Dtstart = time.Now()
-		ev.DateList = rr.All()
+		ev.DateList = rrs.All()
 		for _, d := range ev.DateList {
 			ev.DateStringList = append(ev.DateStringList, d.Format("2006-01-02"))
 		}
