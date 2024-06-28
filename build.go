@@ -429,6 +429,7 @@ func watch(f func()) {
 	w.Add("app.css")
 	w.Add("events")
 	w.Add("events/zrh")
+	w.Add("events/bern")
 	w.Add("events/bsl")
 	w.Add("events/ge")
 
