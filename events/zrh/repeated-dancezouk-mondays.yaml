@@ -1,6 +1,10 @@
 title: DanceZouk Practica
 location: Studio OneSpace
-date_spec: "RRULE:FREQ=WEEKLY;BYDAY=MO,TH"
+date_spec: |
+    DTSTART:19970101T000000Z
+    RRULE:FREQ=WEEKLY;BYDAY=MO,TH
+    EXDATE:20240805
+    EXDATE:20240808
 
 
 
