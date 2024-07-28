@@ -1,10 +1,13 @@
 title: Lambada practica
 time: 20:15
 
-date_spec: "RRULE:FREQ=WEEKLY;BYDAY=MO"
+date_spec: |
+  DTSTART:20240819T000000Z
+  RRULE:FREQ=WEEKLY;BYDAY=MO
 price: 5
 location: Lambaswiss
-custom_schedule_string: Mondays
+custom_schedule_string: Mondays from 19.08
+# custom_schedule_string: Mondays
 URL: http://lambaswiss.com
 city: zrh
 image: lambaswissblack.png
