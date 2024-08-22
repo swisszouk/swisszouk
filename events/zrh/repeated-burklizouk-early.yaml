@@ -2,8 +2,10 @@ title: Bürklizouk
 location: Bürkliplatz
 dates:
     - 2024-08-25
+    - 2024-09-01
+    - 2024-09-15
 
-custom_schedule_string: "#SUMMARY_SKIP"
+custom_schedule_string: "some Sundays"
 city: zrh
 time: 18:00
 price: 0
